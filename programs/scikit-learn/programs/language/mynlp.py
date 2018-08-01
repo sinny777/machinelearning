@@ -9,12 +9,12 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn import metrics
 
 #Loading the data set - training data.
-df = pd.read_csv('../data/raw_home_automation.csv', sep=',')
+df = pd.read_csv('../../../../data/raw_home_automation.csv', sep=',')
 
 X_train = df['utterances']
 Y_train = df['intent']
 
-df_test = pd.read_csv('../data/test_data.csv', sep=',')
+# df_test = pd.read_csv('../data/test_data.csv', sep=',')
 
 # X_test = df_test['utterances']
 # Y_test = df_test['intent']
@@ -25,12 +25,16 @@ Y_test = pd.Series(["weather", "appliance_action"])
 from sklearn.feature_extraction.text import CountVectorizer
 count_vect = CountVectorizer()
 X_train_counts = count_vect.fit_transform(X_train)
-# print(X_train_counts.shape)
+print(X_train_counts.shape)
+# X_test_counts = count_vect.fit_transform(X_test)
+# print(X_test_counts.shape)
 
 from sklearn.feature_extraction.text import TfidfTransformer
 tfidf_transformer = TfidfTransformer()
 X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
-# print(X_train_tfidf.shape)
+print(X_train_tfidf.shape)
+# X_test_tfidf = tfidf_transformer.fit_transform(X_test_counts)
+# print(X_test_tfidf.shape)
 
 # Machine Learning
 # Training Naive Bayes (NB) classifier on training data.
