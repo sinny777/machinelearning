@@ -6,7 +6,7 @@ import nltk
 import pandas as pd
 import numpy as np
 
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
@@ -36,10 +36,10 @@ class NLPUtility(object):
         # optionally removing stop words.  Returns a list of words.
         #
         # 1. Remove HTML
-        beautiful_text = BeautifulSoup(text, "lxml").get_text()
+        # beautiful_text = BeautifulSoup(text, "lxml").get_text()
         #
         # 2. Remove non-letters
-        beautiful_text = re.sub("[^a-zA-Z]"," ", beautiful_text)
+        beautiful_text = re.sub("[^a-zA-Z]"," ", text)
         #
         # 3. Convert words to lower case and split them
         words = beautiful_text.lower().split()
