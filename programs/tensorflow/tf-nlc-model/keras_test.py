@@ -35,7 +35,7 @@ def preprocess_data():
 
     print('Found %s word vectors.' % len(embeddings_index))
 
-    df = pd.read_csv('data/intents_data.csv')
+    df = pd.read_csv('data/data.csv')
     print(df.shape)
     labels = []
     texts = []

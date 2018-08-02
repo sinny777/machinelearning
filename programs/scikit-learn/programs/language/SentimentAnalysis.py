@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     print("Cleaning and parsing the training set movie reviews...\n")
     for i in range( 0, len(train["review"])):
-        clean_train_reviews.append(" ".join(NLPUtility.text_to_wordlist(train["review"][i], True)))
+        clean_train_reviews.append(" ".join(NLPUtility.text_to_wordlist(train["review"][i], True, True)))
 
 
     # ****** Create a bag of words from the training set
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     print("Cleaning and parsing the test set movie reviews...\n")
     for i in range(0,len(test["review"])):
-        clean_test_reviews.append(" ".join(NLPUtility.text_to_wordlist(test["review"][i], True)))
+        clean_test_reviews.append(" ".join(NLPUtility.text_to_wordlist(test["review"][i], True, True)))
 
     # Get a bag of words for the test set, and convert to a numpy array
     test_data_features = vectorizer.transform(clean_test_reviews)

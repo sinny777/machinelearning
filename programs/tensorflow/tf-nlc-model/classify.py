@@ -13,6 +13,7 @@ with open('config.json', 'r') as f:
 
 def get_scoring_url():
     wml_credentials=CONFIG["wml_credentials"]
+    global client
     client = WatsonMachineLearningAPIClient(wml_credentials)
     # print(client.repository.list_models())
     # print(client.deployments.get_details())
@@ -49,4 +50,4 @@ def classify():
     for query in sys.stdin:
         print(get_results(query))
 
-get_scoring_url()
+classify()
