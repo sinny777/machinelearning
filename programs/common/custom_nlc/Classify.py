@@ -1,4 +1,6 @@
 
+## python Classify.py --data_dir ../../../data --data_file data.csv --result_dir results
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -89,11 +91,9 @@ def get_scoring_url():
     wml_credentials=CONFIG["wml_credentials"]
     global client
     client = WatsonMachineLearningAPIClient(wml_credentials)
-    # print(client.repository.list_models())
-    # print(client.deployments.get_details())
-    deployment_details = client.deployments.get_details(CONFIG["deployment_id"]);
+    deployment_details = client.deployments.get_details(CONFIG["deployment_id2"]);
     scoring_url = client.deployments.get_scoring_url(deployment_details)
-    print(scoring_url)
+    print("scoring_url: >> ", scoring_url)
     # scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/9ed7fe34-d927-4111-8b95-0e72a3bde6f8/online'
     return scoring_url
 
@@ -101,6 +101,7 @@ def get_results(sentence):
     ERROR_THRESHOLD = 0.25
     # print("Going to Classify: >> ", sentence)
     global model_handler
+    global scoring_url
     try:
       model_handler
     except NameError:
@@ -108,9 +109,15 @@ def get_results(sentence):
 
     if FLAGS.from_cloud:
         ERROR_THRESHOLD = 0.25
-        toPredict = model_handler.data_handler.convert_to_predict(text)
+        to_predict_arr = model_handler.data_handler.convert_to_predict(sentence)
+        if (to_predict_arr.ndim == 1):
+            to_predict_arr = np.array([to_predict_arr])
+
         scoring_data = {'values': to_predict_arr.tolist()}
-        scoring_url = get_scoring_url()
+        try:
+          scoring_url
+        except NameError:
+          scoring_url = get_scoring_url()
         # send scoring dictionary to deployed model to get predictions
         resp = client.deployments.score(scoring_url, scoring_data)
         result = resp["values"][0][0]
@@ -131,7 +138,9 @@ def classify(_):
     set_flags()
     print("Model is ready! You now can enter requests.")
     for query in sys.stdin:
-        print(get_results(query))
+        if query.strip() == "close":
+            sys.exit(0)
+        print(get_results(query.strip()))
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -140,7 +149,7 @@ if __name__ == '__main__':
   parser.add_argument('--result_dir', type=str, default='$RESULT_DIR', help='Directory with results')
   parser.add_argument('--data_file', type=str, default='data.csv', help='File name for Intents and Classes')
   parser.add_argument('--model_name', type=str, default='my_nlc_model.h5', help='Name of the model')
-  parser.add_argument('--from_cloud', type=int, default=False, help='Classify from Model deployed on IBM Cloud')
+  parser.add_argument('--from_cloud', type=int, default=True, help='Classify from Model deployed on IBM Cloud')
 
   FLAGS, unparsed = parser.parse_known_args()
   print("Start model training")

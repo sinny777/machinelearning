@@ -44,17 +44,19 @@ class ModelHandler(object):
         self.datasets.train = DataSet(train_x, train_y)
 
     def create_model(self, PARAMS):
-        # K.clear_session()
+        K.clear_session()
+        tf.reset_default_graph()
         init_g = tf.global_variables_initializer()
         init_l = tf.local_variables_initializer()
         with tf.Session() as sess:
           sess.run(init_g)
           sess.run(init_l)
+
           model = Sequential()
-          # model.add(Dense(output_dim=8,init ='uniform',activation='relu', input_dim=len(train_x[0])))
-          model.add(Dense(8, activation='relu', input_shape=(np.asarray(self.datasets.train.utterances[0]).shape)))
-          model.add(Dense(8, activation='relu'))
-          model.add(Dense(8, activation='relu'))
+          # model.add(Dense(output_dim=8,init='uniform',activation='relu', input_dim=len(train_x[0])))
+          model.add(Dense(PARAMS["batch_size"], activation='relu', input_shape=(np.asarray(self.datasets.train.utterances[0]).shape)))
+          model.add(Dense(PARAMS["batch_size"], activation='relu'))
+          model.add(Dense(PARAMS["batch_size"], activation='relu'))
           model.add(Dense(np.asarray(self.datasets.train.intents[0]).shape[0], activation=PARAMS["activation"]))
           model.summary()
 
@@ -63,7 +65,7 @@ class ModelHandler(object):
           model.compile(loss=PARAMS["loss"], optimizer=PARAMS["optimizer"], metrics=PARAMS["metrics"])
           monitor = EarlyStopping(monitor='val_loss', min_delta=1e-3, patience=PARAMS["patience"], verbose=0, mode='auto')
           checkpointer = ModelCheckpoint(filepath=self.CONFIG["MODEL_WEIGHTS_PATH"], verbose=0, save_best_only=True) # Save best model
-          model.fit(np.asarray(self.datasets.train.utterances), np.asarray(self.datasets.train.intents), epochs=PARAMS["epochs"], batch_size=PARAMS["batch_size"],  verbose=1, validation_split=0.1, callbacks=[tbCallBack, monitor, checkpointer])
+          model.fit(np.asarray(self.datasets.train.utterances), np.asarray(self.datasets.train.intents), epochs=PARAMS["epochs"], batch_size=PARAMS["batch_size"],  verbose=1, validation_split=0.05, callbacks=[tbCallBack, monitor, checkpointer])
           model.load_weights(self.CONFIG["MODEL_WEIGHTS_PATH"]) # load weights from best model
           scores = model.evaluate(np.asarray(self.datasets.train.utterances), np.asarray(self.datasets.train.intents))
           print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))

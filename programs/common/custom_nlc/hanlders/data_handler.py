@@ -24,24 +24,25 @@ class DataHandler(object):
         documents = []
         ignore_words = ['?']
         print("Cleaning and parsing the training set movie reviews...\n")
-        for i in range( 0, len(self.dataframe["utterances"])):
-            # w = NLPUtility.text_to_wordlist(self.dataframe["utterances"][i], True, True)
+        for i in range( 0, len(self.dataframe)):
+            w = NLPUtility.text_to_wordlist(self.dataframe["utterances"][i], True, False)
             # w = NLPUtility.text_to_word_sequence(self.dataframe["utterances"][i])
-            w = NLPUtility.tokenize_sentence(self.dataframe["utterances"][i])
+            # w = NLPUtility.tokenize_sentence(self.dataframe["utterances"][i])
             self.processed_words.extend(w)
             documents.append((w, self.dataframe["intent"][i]))
             if self.dataframe["intent"][i] not in self.intents:
                 self.intents.append(self.dataframe["intent"][i])
 
+        print("Total Processed Words Before Sorting: ", len(self.processed_words))
+        self.processed_words = NLPUtility.stem_words_ignore(self.processed_words, ignore_words)
+        self.processed_words = sorted(list(set(self.processed_words)))
+
         # remove duplicates
         self.intents = sorted(list(set(self.intents)))
 
-        print("Total Processed Words Before Sorting: ", len(self.processed_words))
-        self.processed_words = NLPUtility.stem_words(self.processed_words, ignore_words)
-        self.processed_words = sorted(list(set(self.processed_words)))
-        print("Total Processed Words After Sorting: ", len(self.processed_words))
-        print("Total Utterances: ", len(documents))
-        print("Total Intents: ", len(self.intents))
+        # print("Total Processed Words After Sorting: ", len(self.processed_words))
+        # print("Total Utterances: ", len(documents))
+        # print("Total Intents: ", len(self.intents))
 
         training = []
         # create an empty array for our output
@@ -51,8 +52,7 @@ class DataHandler(object):
             # initialize our bag of words
             bag = []
             pattern_words = doc[0]
-            ignore_words = ['?']
-            pattern_words = NLPUtility.stem_words(pattern_words, ignore_words)
+            pattern_words = NLPUtility.stem_words(pattern_words)
             for w in self.processed_words:
                 bag.append(1) if w in pattern_words else bag.append(0)
 
@@ -71,9 +71,9 @@ class DataHandler(object):
         return training
 
     def convert_to_predict(self, text):
-        # sentence_words = NLPUtility.text_to_wordlist(text, True, True)
+        sentence_words = NLPUtility.text_to_wordlist(text, True, True)
         # sentence_words = NLPUtility.text_to_word_sequence(text)
-        sentence_words = NLPUtility.tokenize_sentence(text)
+        # sentence_words = NLPUtility.tokenize_sentence(text)
         bag = []
         for w in self.processed_words:
             bag.append(1) if w in sentence_words else bag.append(0)

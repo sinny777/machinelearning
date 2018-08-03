@@ -1,5 +1,6 @@
 data
 results
+zip_files
 config.json
 .ipynb_*
 __pycache__

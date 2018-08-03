@@ -32,25 +32,26 @@ class NLPUtility(object):
         return nltk.word_tokenize(sentence)
 
     @staticmethod
-    def stem_words(words, ignore_words):
+    def stem_words_ignore(words, ignore_words):
         words = [stemmer.stem(w.lower()) for w in words if w not in ignore_words]
         return words
 
     @staticmethod
+    def stem_words(words):
+        words = [stemmer.stem(w.lower()) for w in words]
+        return words
+
+    @staticmethod
     def text_to_wordlist( text, remove_stopwords=False, stem=False ):
-        # Function to convert a document to a sequence of words,
-        # optionally removing stop words.  Returns a list of words.
-        #
         # 1. Remove HTML
         # beautiful_text = BeautifulSoup(text, "lxml").get_text()
         #
         # 2. Remove non-letters
         beautiful_text = re.sub("[^a-zA-Z]"," ", text)
-        #
-        # 3. Convert words to lower case and split them
-        words = beautiful_text.lower().split()
-        #
-        # 4. Optionally remove stop words (false by default)
+        beautiful_text = beautiful_text.lower()
+        words = nltk.word_tokenize(beautiful_text)
+
+        # 3. Optionally remove stop words (false by default)
         if remove_stopwords:
             stops = set(stopwords.words("english"))
             words = [w for w in words if not w in stops]

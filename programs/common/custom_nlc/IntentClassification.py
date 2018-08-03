@@ -3,9 +3,9 @@
 #  Author: Gurvinder Singh
 #  Date: 01/08/2018
 #
-#  This file contains code to accompany the Kaggle tutorial
-#  "Deep learning goes to the movies".  The code in this file
-#  is for Part 1 of the tutorial on Natural Language Processing.
+# Natural Language Classification.
+#
+# python IntentClassification.py --data_dir ../../../data --data_file data.csv --result_dir results
 #
 # *************************************** #
 
@@ -103,9 +103,9 @@ def create_model(library_name="keras"):
                     "log_dir": TENSORBOARD_LOGS_PATH,
                     "epochs": FLAGS.epochs,
                     "batch_size": FLAGS.batch_size,
-                    "activation": "softmax",
-                    "loss": "categorical_crossentropy",
-                    "optimizer": "rmsprop",
+                    "activation": FLAGS.activation,
+                    "loss": FLAGS.loss,
+                    "optimizer": FLAGS.optimizer,
                     "metrics": ["accuracy"],
                     "patience": 10
                  }
@@ -123,8 +123,11 @@ if __name__ == '__main__':
   parser.add_argument('--data_dir', type=str, default='$DATA_DIR', help='Directory with data')
   parser.add_argument('--result_dir', type=str, default='$RESULT_DIR', help='Directory with results')
   parser.add_argument('--data_file', type=str, default='data.csv', help='File name for Intents and Classes')
+  parser.add_argument('--loss', type=str, default='categorical_crossentropy', help='loss function: categorical_crossentropy, mean_squared_error')
+  parser.add_argument('--activation', type=str, default='softmax', help='activation function: softmax, sigmoid')
+  parser.add_argument('--optimizer', type=str, default='adam', help='optimizer : adam, rmsprop')
   parser.add_argument('--epochs', type=int, default=200, help='Number of training iterations')
-  parser.add_argument('--batch_size', type=int, default=8, help='Training batch size')
+  parser.add_argument('--batch_size', type=int, default=64, help='Training batch size')
   parser.add_argument('--model_name', type=str, default='my_nlc_model.h5', help='Name of the model')
 
   FLAGS, unparsed = parser.parse_known_args()
