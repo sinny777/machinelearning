@@ -22,9 +22,9 @@ import sys
 import os
 import tarfile
 
-from hanlders.data_handler import DataHandler
-# from hanlders.scikit_model_handler import ModelHandler
-from hanlders.keras_model_handler import ModelHandler
+from handlers.data_handler import DataHandler
+# from handlers.scikit_model_handler import ModelHandler
+from handlers.keras_model_handler import ModelHandler
 import pandas as pd
 import numpy as np
 import random
