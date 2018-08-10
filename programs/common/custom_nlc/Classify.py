@@ -91,7 +91,7 @@ def get_scoring_url():
     wml_credentials=CONFIG["wml_credentials"]
     global client
     client = WatsonMachineLearningAPIClient(wml_credentials)
-    deployment_details = client.deployments.get_details(CONFIG["deployment_id2"]);
+    deployment_details = client.deployments.get_details(CONFIG["deployment_id"]);
     scoring_url = client.deployments.get_scoring_url(deployment_details)
     print("scoring_url: >> ", scoring_url)
     # scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/9ed7fe34-d927-4111-8b95-0e72a3bde6f8/online'

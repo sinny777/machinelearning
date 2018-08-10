@@ -18,7 +18,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras import backend as K
 from keras.models import load_model
 
-from hanlders.data_handler import DataHandler, DataSet
+from handlers.data_handler import DataHandler, DataSet
 
 class ModelHandler(object):
     def __init__(self, data_handler, CONFIG):

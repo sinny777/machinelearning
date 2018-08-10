@@ -1,0 +1,102 @@
+{
+  "models": {
+    "resources": [{
+      "metadata": {
+        "guid": "9e39aec2-3385-4b20-bda5-fe41f7dc4e9f",
+        "url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/9e39aec2-3385-4b20-bda5-fe41f7dc4e9f",
+        "created_at": "2018-08-10T11:41:31.685Z",
+        "modified_at": "2018-08-10T11:41:31.748Z"
+      },
+      "entity": {
+        "runtime_environment": "None Provided",
+        "learning_configuration_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/9e39aec2-3385-4b20-bda5-fe41f7dc4e9f/learning_configuration",
+        "name": "MyCarNLC_ML_Model",
+        "label_col": "",
+        "learning_iterations_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/9e39aec2-3385-4b20-bda5-fe41f7dc4e9f/learning_iterations",
+        "feedback_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/9e39aec2-3385-4b20-bda5-fe41f7dc4e9f/feedback",
+        "latest_version": {
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/models/9e39aec2-3385-4b20-bda5-fe41f7dc4e9f/versions/60fbd20c-9b4e-44be-a151-75890c5ee698",
+          "guid": "60fbd20c-9b4e-44be-a151-75890c5ee698",
+          "created_at": "2018-08-10T11:41:31.748Z"
+        },
+        "model_type": "tensorflow-1.5",
+        "deployments": {
+          "count": 0,
+          "url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/9e39aec2-3385-4b20-bda5-fe41f7dc4e9f/deployments"
+        },
+        "evaluation_metrics_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/9e39aec2-3385-4b20-bda5-fe41f7dc4e9f/evaluation_metrics"
+      }
+    }, {
+      "metadata": {
+        "guid": "00c8653e-3022-4942-934f-c53dd287eec1",
+        "url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/00c8653e-3022-4942-934f-c53dd287eec1",
+        "created_at": "2018-08-10T11:08:33.315Z",
+        "modified_at": "2018-08-10T12:22:19.089Z"
+      },
+      "entity": {
+        "runtime_environment": "None Provided",
+        "learning_configuration_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/00c8653e-3022-4942-934f-c53dd287eec1/learning_configuration",
+        "name": "MyCarNLC_ML_Model",
+        "label_col": "",
+        "learning_iterations_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/00c8653e-3022-4942-934f-c53dd287eec1/learning_iterations",
+        "feedback_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/00c8653e-3022-4942-934f-c53dd287eec1/feedback",
+        "latest_version": {
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/models/00c8653e-3022-4942-934f-c53dd287eec1/versions/b4c96f74-4eb5-4537-b777-ef81b986216b",
+          "guid": "b4c96f74-4eb5-4537-b777-ef81b986216b",
+          "created_at": "2018-08-10T12:21:45.399Z"
+        },
+        "model_type": "tensorflow-1.5",
+        "deployments": {
+          "count": 1,
+          "url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/00c8653e-3022-4942-934f-c53dd287eec1/deployments"
+        },
+        "deployed_version": {
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/models/00c8653e-3022-4942-934f-c53dd287eec1/versions/b4c96f74-4eb5-4537-b777-ef81b986216b",
+          "guid": "b4c96f74-4eb5-4537-b777-ef81b986216b",
+          "created_at": "2018-08-10T12:21:45.370Z"
+        },
+        "evaluation_metrics_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/00c8653e-3022-4942-934f-c53dd287eec1/evaluation_metrics"
+      }
+    }]
+  },
+  "definitions": {
+    "resources": [{
+      "metadata": {
+        "guid": "1162d2a2-f0fb-4293-9e25-2327e7017e79",
+        "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/1162d2a2-f0fb-4293-9e25-2327e7017e79",
+        "created_at": "2018-08-10T10:53:27.092Z",
+        "modified_at": "2018-08-10T10:53:27.167Z"
+      },
+      "entity": {
+        "name": "MyCarNLC_ML_Model definition",
+        "description": "MyCarNLC_ML_Model description",
+        "command": "python3 custom_nlc/IntentClassification.py --epochs 200",
+        "framework": {
+          "name": "tensorflow",
+          "version": "1.5",
+          "runtimes": [{
+            "name": "python",
+            "version": "3.5"
+          }]
+        },
+        "training_definition_version": {
+          "guid": "29f236cf-c485-4a97-964d-52131ce3f0a1",
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/1162d2a2-f0fb-4293-9e25-2327e7017e79/versions/29f236cf-c485-4a97-964d-52131ce3f0a1",
+          "content_url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/1162d2a2-f0fb-4293-9e25-2327e7017e79/versions/29f236cf-c485-4a97-964d-52131ce3f0a1/content",
+          "content_status": {
+            "state": "no_content"
+          }
+        }
+      }
+    }]
+  },
+  "experiments": {
+    "resources": []
+  },
+  "runtimes": {
+    "resources": []
+  },
+  "libraries": {
+    "resources": []
+  }
+}

@@ -14,7 +14,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfTransformer
 
-from hanlders.data_handler import DataHandler, DataSet
+from handlers.data_handler import DataHandler, DataSet
 
 class ModelHandler(object):
     def __init__(self, data_handler, CONFIG):
