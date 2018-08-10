@@ -78,19 +78,20 @@ class ModelHandler(object):
         return model
 
     def predict(self, text):
-        ERROR_THRESHOLD = 0.25
+        ERROR_THRESHOLD = 0.10
         model = self.load_keras_model()
         toPredict = self.data_handler.convert_to_predict(text)
         if (toPredict.ndim == 1):
             toPredict = np.array([toPredict])
 
-        results = model.predict(np.array(toPredict))[0]
+        predictions = model.predict(np.array(toPredict))[0]
+        # np.argmax(predictions[0])
         # filter out predictions below a threshold
-        results = [[i,r] for i,r in enumerate(results) if r>ERROR_THRESHOLD]
+        predictions = [[i,r] for i,r in enumerate(predictions) if r>ERROR_THRESHOLD]
         # sort by strength of probability
-        results.sort(key=lambda x: x[1], reverse=True)
+        predictions.sort(key=lambda x: x[1], reverse=True)
         return_list = []
-        for r in results:
+        for r in predictions:
             return_list.append((self.data_handler.intents[r[0]], r[1]))
         # return tuple of intent and probability
         return return_list

@@ -109,6 +109,7 @@ def delete_model(artifact_uid):
 # train_model()
 # store_model()
 # deploy_model()
-client.deployments.list()
+# client.deployments.list()
 # client.training.list()
 # print(client.repository.get_model_details())
+# client.repository.FunctionMetaNames.get()
