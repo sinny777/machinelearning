@@ -5,11 +5,15 @@
 import pandas as pd
 import numpy as np
 import random
+import re
 
 import os.path
 from os import path
 
-from utilities.NLPUtility import NLPUtility
+# from utilities.NLPUtility import NLPUtility
+
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
 
 class DataHandler(object):
     def __init__(self, dataframe, library_name):
@@ -17,67 +21,49 @@ class DataHandler(object):
         self.library_name = library_name
         self.processed_words = []
         self.intents = []
-
+        self.max_features = 500
+        self.maxlen = 50
+        self.tokenizer = Tokenizer(num_words=self.max_features, split=' ')
 
     def get_training_data(self):
-        # Initialize an empty list to hold the clean text
         documents = []
-        ignore_words = ['?']
-        print("Cleaning and parsing the training set movie reviews...\n")
-        for i in range( 0, len(self.dataframe)):
-            w = NLPUtility.text_to_wordlist(self.dataframe["utterances"][i], True, False)
-            # w = NLPUtility.text_to_word_sequence(self.dataframe["utterances"][i])
-            # w = NLPUtility.tokenize_sentence(self.dataframe["utterances"][i])
-            self.processed_words.extend(w)
-            documents.append((w, self.dataframe["intent"][i]))
-            if self.dataframe["intent"][i] not in self.intents:
-                self.intents.append(self.dataframe["intent"][i])
-
-        print("Total Processed Words Before Sorting: ", len(self.processed_words))
-        self.processed_words = NLPUtility.stem_words_ignore(self.processed_words, ignore_words)
-        self.processed_words = sorted(list(set(self.processed_words)))
-
-        # remove duplicates
+        self.tokenizer.fit_on_texts(self.dataframe["utterances"].values)
+        X = self.tokenizer.texts_to_sequences(self.dataframe["utterances"].values)
+        X = pad_sequences(X, maxlen=self.maxlen)
+        self.intents = self.dataframe["intent"].unique()
         self.intents = sorted(list(set(self.intents)))
-
-        # print("Total Processed Words After Sorting: ", len(self.processed_words))
-        # print("Total Utterances: ", len(documents))
-        # print("Total Intents: ", len(self.intents))
-
-        training = []
-        # create an empty array for our output
         output_empty = [0] * len(self.intents)
-        # training set, bag of words for each sentence
-        for doc in documents:
-            # initialize our bag of words
-            bag = []
-            pattern_words = doc[0]
-            pattern_words = NLPUtility.stem_words(pattern_words)
-            for w in self.processed_words:
-                bag.append(1) if w in pattern_words else bag.append(0)
-
+        Y = []
+        for i in range( 0, len(X)):
+            output_row = list(output_empty)
+            intent = self.dataframe["intent"][i]
+            output_row[self.intents.index(intent)] = 1
             if self.library_name == 'scikit':
-                training.append([bag, doc[1]])
+                Y.append(intent)
             else:
-                # output is a '0' for each tag and '1' for current tag
-                output_row = list(output_empty)
-                output_row[self.intents.index(doc[1])] = 1
-                training.append([bag, output_row])
+                Y.append(output_row)
 
-
-        # shuffle our features and turn into np.array
-        random.shuffle(training)
-        training = np.array(training)
-        return training
+        print("Length of X: >> ", len(X))
+        print("Length of Y: >> ", len(Y))
+        return X, Y
 
     def convert_to_predict(self, text):
-        sentence_words = NLPUtility.text_to_wordlist(text, True, True)
-        # sentence_words = NLPUtility.text_to_word_sequence(text)
-        # sentence_words = NLPUtility.tokenize_sentence(text)
-        bag = []
-        for w in self.processed_words:
-            bag.append(1) if w in sentence_words else bag.append(0)
-        return np.array(bag)
+        preprocessed_records = []
+        cleanString = re.sub(r"[!\"#$%&()*+,-./:;<=>?@[\]^_`{|}~]", "", text)
+        splitted_text = cleanString.split()[:self.maxlen]
+        hashed_tokens = []
+
+        for token in splitted_text:
+            index = self.tokenizer.word_index.get(token, 0)
+            if index < 501 and index > 0:
+                hashed_tokens.append(index)
+
+        hashed_tokens_size = len(hashed_tokens)
+        padded_tokens = [0]*(self.maxlen - hashed_tokens_size) + hashed_tokens
+        preprocessed_records.append(padded_tokens)
+        return preprocessed_records
+
+        # scoring_payload = {'values': preprocessed_records}
 
 class DataSet(object):
     def __init__(self, utterances, intents):

@@ -91,11 +91,49 @@ def store_model(run_guid):
     # model_path = "results/my_nlc_model.h5"
     saved_model_details = client.repository.store_model(run_guid, meta_props)
     print(json.dumps(saved_model_details, indent=2))
+    return saved_model_details
 
 def deploy_model(model_uid):
     deployment_details = client.deployments.create(model_uid, "HomeAutomation_ML_Model_Deploy")
     scoring_url = client.deployments.get_scoring_url(deployment_details)
     print(scoring_url)
+    return scoring_url
+
+def score_generator(params=ai_params):
+
+    def score(payload):
+        import re
+        from watson_machine_learning_client import WatsonMachineLearningAPIClient
+        client = WatsonMachineLearningAPIClient(params['wml_credentials'])
+
+        max_fatures = 500
+        maxlen = 50
+
+        preprocessed_records = []
+        complain_data = payload['values']
+        word_index = params['word_index']
+
+        for data in complain_data:
+            comment = data[0]
+            cleanString = re.sub(r"[!\"#$%&()*+,-./:;<=>?@[\]^_`{|}~]", "", comment)
+            splitted_comment = cleanString.split()[:maxlen]
+            hashed_tokens = []
+
+            for token in splitted_comment:
+                index = word_index.get(token, 0)
+                if index < 501 and index > 0:
+                    hashed_tokens.append(index)
+
+            hashed_tokens_size = len(hashed_tokens)
+            padded_tokens = [0]*(maxlen-hashed_tokens_size) + hashed_tokens
+            preprocessed_records.append(padded_tokens)
+
+        scoring_payload = {'values': preprocessed_records}
+        print(str(scoring_payload))
+
+        return client.deployments.score(params['scoring_endpoint'], scoring_payload)
+
+    return score
 
 def retrain_model(definition_uid):
     training_configuration_metadata = {
@@ -153,7 +191,7 @@ def get_model_details(model_uid):
     print(json.dumps(model_details, indent=2))
 
 def delete_trainings():
-    trainings = ["training--w6UTB5iR", "training--cukbB5mg", "training-_UyOsBciR", "training-stIH7Lcig"]
+    trainings = ["training-fG3KcL5mg"]
     for t in trainings:
         client.training.delete(t)
 

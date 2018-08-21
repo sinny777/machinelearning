@@ -9,7 +9,7 @@ import os.path
 from os import path
 import pickle
 from sklearn.externals import joblib
-
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -18,6 +18,7 @@ from handlers.data_handler import DataHandler, DataSet
 
 class ModelHandler(object):
     def __init__(self, data_handler, CONFIG):
+        self.name = "scikit"
         self.data_handler = data_handler
         self.CONFIG = CONFIG
         self.ensure_dir(self.CONFIG["MODEL_PATH"])
@@ -32,12 +33,12 @@ class ModelHandler(object):
             os.makedirs(directory)
 
     def prepare_data(self):
-        training = self.data_handler.get_training_data()
-        train_x = list(training[:,0])
-        train_y = list(training[:,1])
-        print("Training Data Length: ", len(train_x))
-        print("Training Data Target Length: ", len(train_y))
-        self.datasets.train = DataSet(train_x, train_y)
+        X, Y = self.data_handler.get_training_data()
+        print("Training Data Length: ", len(X))
+        print("Training Data Target Length: ", len(Y))
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.10, random_state = 42)
+        self.datasets.train = DataSet(X_train, Y_train)
+        self.datasets.test = DataSet(X_test, Y_test)
 
     def create_model(self, PARAMS):
         global model

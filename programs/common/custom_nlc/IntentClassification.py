@@ -61,6 +61,7 @@ def set_flags():
     ensure_dir(MODEL_PATH)
 
 def get_keras_model(data_handler):
+    print("\n\n <<<<<<<< GET KERAS MODEL HANDLER >>>>>>>>")
     # Initialize a Random Forest classifier with 100 trees
     CONFIG = {
                 "MODEL_PATH": MODEL_PATH,
@@ -71,6 +72,7 @@ def get_keras_model(data_handler):
     return model_handler
 
 def get_scikit_model(data_handler):
+    print("\n\n <<<<<<<< GET SCIKIT MODEL HANDLER >>>>>>>>")
     # Initialize a Random Forest classifier with 100 trees
     CONFIG = {"MODEL_PATH": MODEL_PATH}
     model_handler = ModelHandler(data_handler, CONFIG)
@@ -83,16 +85,15 @@ def get_model_handler(library_name="keras"):
     df = pd.read_csv(DATA_FILE_PATH, header=0, delimiter=",")
     dh = DataHandler(df, library_name)
     if library_name == "scikit":
-        print("\n\n <<<<<<<< GET SCIKIT MODEL HANDLER >>>>>>>>")
         return get_scikit_model(dh)
     elif library_name == "keras":
-        print("\n\n <<<<<<<< GET KERAS MODEL HANDLER >>>>>>>>")
         return get_keras_model(dh)
     else:
         return None
 
 def create_model(library_name="keras"):
     model_handler = get_model_handler(library_name)
+    print(model_handler.name)
     if library_name == "scikit":
         print("\n\n <<<<<<<< CREATE MODEL FROM SCIKIT LIBRARY >>>>>>>>")
         PARAMS = {"n_estimators": 100}
@@ -123,7 +124,7 @@ if __name__ == '__main__':
   parser.add_argument('--data_dir', type=str, default='$DATA_DIR', help='Directory with data')
   parser.add_argument('--result_dir', type=str, default='$RESULT_DIR', help='Directory with results')
   parser.add_argument('--data_file', type=str, default='data.csv', help='File name for Intents and Classes')
-  parser.add_argument('--loss', type=str, default='categorical_crossentropy', help='loss function: categorical_crossentropy, mean_squared_error')
+  parser.add_argument('--loss', type=str, default='binary_crossentropy', help='loss function: categorical_crossentropy, mean_squared_error')
   parser.add_argument('--activation', type=str, default='softmax', help='activation function: softmax, sigmoid')
   parser.add_argument('--optimizer', type=str, default='adam', help='optimizer : adam, rmsprop')
   parser.add_argument('--epochs', type=int, default=200, help='Number of training iterations')

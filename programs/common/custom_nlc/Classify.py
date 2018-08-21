@@ -11,8 +11,8 @@ import os
 import tarfile
 
 from handlers.data_handler import DataHandler
-# from handlers.scikit_model_handler import ModelHandler
-from handlers.keras_model_handler import ModelHandler
+from handlers.scikit_model_handler import ModelHandler
+# from handlers.keras_model_handler import ModelHandler
 import pandas as pd
 import numpy as np
 import random
@@ -62,7 +62,15 @@ with open('config.json', 'r') as f:
     global CONFIG
     CONFIG = json.load(f)
 
+def get_scikit_model(data_handler):
+    print("\n\n <<<<<<<< GET SCIKIT MODEL HANDLER >>>>>>>>")
+    # Initialize a Random Forest classifier with 100 trees
+    CONFIG = {"MODEL_PATH": MODEL_PATH}
+    model_handler = ModelHandler(data_handler, CONFIG)
+    return model_handler
+
 def get_keras_model(data_handler):
+    print("\n\n <<<<<<<< GET KERAS MODEL HANDLER >>>>>>>>")
     # Initialize a Random Forest classifier with 100 trees
     CONFIG = {
                 "MODEL_PATH": MODEL_PATH,
@@ -79,10 +87,8 @@ def get_model_handler(library_name="keras"):
     df = pd.read_csv(DATA_FILE_PATH, header=0, delimiter=",")
     dh = DataHandler(df, library_name)
     if library_name == "scikit":
-        print("\n\n <<<<<<<< GET SCIKIT MODEL HANDLER >>>>>>>>")
         return get_scikit_model(dh)
     elif library_name == "keras":
-        print("\n\n <<<<<<<< GET KERAS MODEL HANDLER >>>>>>>>")
         return get_keras_model(dh)
     else:
         return None
@@ -149,7 +155,7 @@ if __name__ == '__main__':
   parser.add_argument('--result_dir', type=str, default='$RESULT_DIR', help='Directory with results')
   parser.add_argument('--data_file', type=str, default='data.csv', help='File name for Intents and Classes')
   parser.add_argument('--model_name', type=str, default='my_nlc_model.h5', help='Name of the model')
-  parser.add_argument('--from_cloud', type=int, default=True, help='Classify from Model deployed on IBM Cloud')
+  parser.add_argument('--from_cloud', type=int, default=False, help='Classify from Model deployed on IBM Cloud')
 
   FLAGS, unparsed = parser.parse_known_args()
   print("Start model training")
