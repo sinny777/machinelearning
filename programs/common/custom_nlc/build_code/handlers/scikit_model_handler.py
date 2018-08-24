@@ -14,23 +14,21 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfTransformer
 
-from handlers.data_handler import DataHandler, DataSet
+from build_code.handlers.data_handler import DataHandler, DataSet
 
 class ModelHandler(object):
-    def __init__(self, data_handler, CONFIG):
+    def __init__(self, CONFIG):
         self.name = "scikit"
-        self.data_handler = data_handler
         self.CONFIG = CONFIG
-        self.ensure_dir(self.CONFIG["MODEL_PATH"])
+        self.data_handler = self.get_data_handler()
         class DataSets(object):
             pass
         self.datasets = DataSets()
         self.prepare_data()
 
-    def ensure_dir(self, file_path):
-        directory = os.path.dirname(file_path)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+    def get_data_handler(self):
+        df = pd.read_csv(self.CONFIG["DATA_FILE_PATH"], header=0, delimiter=",")
+        return DataHandler(df, "scikit")
 
     def prepare_data(self):
         X, Y = self.data_handler.get_training_data()
@@ -40,9 +38,9 @@ class ModelHandler(object):
         self.datasets.train = DataSet(X_train, Y_train)
         self.datasets.test = DataSet(X_test, Y_test)
 
-    def create_model(self, PARAMS):
+    def create_model(self):
         global model
-        model = RandomForestClassifier(n_estimators = PARAMS["n_estimators"])
+        model = RandomForestClassifier(n_estimators = self.CONFIG["MODEL_CONFIG"]["epochs"])
         # model = MultinomialNB()
         model = model.fit(self.datasets.train.utterances, self.datasets.train.intents)
         saved_model = joblib.dump(model, self.CONFIG["MODEL_PATH"])

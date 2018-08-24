@@ -23,12 +23,19 @@ class DataHandler(object):
         self.intents = []
         self.max_features = 500
         self.maxlen = 50
-        self.tokenizer = Tokenizer(num_words=self.max_features, split=' ')
+        self.tokenizer = None
+
+    def get_tokenizer(self):
+        if self.tokenizer:
+            pass
+        else:
+            self.tokenizer = Tokenizer(num_words=self.max_features, split=' ')
+            self.tokenizer.fit_on_texts(self.dataframe["utterances"].values)
+        return self.tokenizer
 
     def get_training_data(self):
         documents = []
-        self.tokenizer.fit_on_texts(self.dataframe["utterances"].values)
-        X = self.tokenizer.texts_to_sequences(self.dataframe["utterances"].values)
+        X = self.get_tokenizer().texts_to_sequences(self.dataframe["utterances"].values)
         X = pad_sequences(X, maxlen=self.maxlen)
         self.intents = self.dataframe["intent"].unique()
         self.intents = sorted(list(set(self.intents)))
@@ -54,7 +61,7 @@ class DataHandler(object):
         hashed_tokens = []
 
         for token in splitted_text:
-            index = self.tokenizer.word_index.get(token, 0)
+            index = self.get_tokenizer().word_index.get(token, 0)
             if index < 501 and index > 0:
                 hashed_tokens.append(index)
 

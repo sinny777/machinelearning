@@ -1,5 +1,5 @@
 
-## python Classify.py --data_dir ../../../data --data_file data.csv --result_dir results
+## python Classify.py --data_dir data --result_dir results --config_file model_config.json --data_file data.csv
 
 from __future__ import absolute_import
 from __future__ import division
@@ -10,9 +10,6 @@ import sys
 import os
 import tarfile
 
-from handlers.data_handler import DataHandler
-from handlers.scikit_model_handler import ModelHandler
-# from handlers.keras_model_handler import ModelHandler
 import pandas as pd
 import numpy as np
 import random
@@ -24,9 +21,9 @@ import json
 import urllib3, requests, json, base64, time, os, wget
 from watson_machine_learning_client import WatsonMachineLearningAPIClient
 
-# from handlers.scikit_model_handler import ModelHandler
-from handlers.keras_model_handler import ModelHandler
-from handlers.data_handler import DataHandler
+# from build_code.handlers.scikit_model_handler import ModelHandler
+from build_code.handlers.keras_model_handler import ModelHandler
+from build_code.handlers.data_handler import DataHandler
 
 FLAGS = None
 library_name = "keras"
@@ -36,12 +33,7 @@ def ensure_dir(file_path):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def set_flags():
-    # print(FLAGS)
-    global DATA_FILE_PATH
-    global MODEL_PATH
-    global MODEL_WEIGHTS_PATH
-    global TENSORBOARD_LOGS_PATH
+def set_config():
     if (FLAGS.data_dir[0] == '$'):
       DATA_DIR = os.environ[FLAGS.data_dir[1:]]
     else:
@@ -51,53 +43,53 @@ def set_flags():
     else:
       RESULT_DIR = FLAGS.result_dir
 
+    with open(os.path.join(DATA_DIR, FLAGS.config_file), 'r') as f:
+        MODEL_CONFIG = json.load(f)
+
+    global SECRET_CONFIG
+    with open('config.json', 'r') as f:
+        SECRET_CONFIG = json.load(f)
+
     DATA_FILE_PATH = os.path.join(DATA_DIR, FLAGS.data_file)
-    MODEL_PATH = os.path.join(RESULT_DIR, FLAGS.model_name)
-    MODEL_WEIGHTS_PATH = os.path.join(RESULT_DIR, "model_weights.hdf5")
-    TENSORBOARD_LOGS_PATH = os.path.join(RESULT_DIR, "tensorboard_logs")
+    MODEL_PATH = os.path.join(RESULT_DIR, MODEL_CONFIG["model_name"])
+    MODEL_WEIGHTS_PATH = os.path.join(RESULT_DIR, MODEL_CONFIG["model_weights"])
+    LOG_DIR = os.path.join(RESULT_DIR, MODEL_CONFIG["log_dir"])
     ensure_dir(DATA_FILE_PATH)
     ensure_dir(MODEL_PATH)
-
-with open('config.json', 'r') as f:
     global CONFIG
-    CONFIG = json.load(f)
-
-def get_scikit_model(data_handler):
-    print("\n\n <<<<<<<< GET SCIKIT MODEL HANDLER >>>>>>>>")
-    # Initialize a Random Forest classifier with 100 trees
-    CONFIG = {"MODEL_PATH": MODEL_PATH}
-    model_handler = ModelHandler(data_handler, CONFIG)
-    return model_handler
-
-def get_keras_model(data_handler):
-    print("\n\n <<<<<<<< GET KERAS MODEL HANDLER >>>>>>>>")
-    # Initialize a Random Forest classifier with 100 trees
     CONFIG = {
+                "DATA_DIR": DATA_DIR,
+                "RESULT_DIR": RESULT_DIR,
+                "DATA_FILE_PATH": DATA_FILE_PATH,
                 "MODEL_PATH": MODEL_PATH,
-                "MODEL_WEIGHTS_PATH": MODEL_WEIGHTS_PATH
+                "MODEL_WEIGHTS_PATH": MODEL_WEIGHTS_PATH,
+                "LOG_DIR": LOG_DIR,
+                "MODEL_CONFIG": MODEL_CONFIG
              }
 
-    model_handler = ModelHandler(data_handler, CONFIG)
+def get_keras_model():
+    print("\n\n <<<<<<<< GET KERAS MODEL HANDLER >>>>>>>>")
+    model_handler = ModelHandler(CONFIG)
+    return model_handler
+
+def get_scikit_model():
+    print("\n\n <<<<<<<< GET SCIKIT MODEL HANDLER >>>>>>>>")
+    model_handler = ModelHandler(CONFIG)
     return model_handler
 
 def get_model_handler(library_name="keras"):
-    global df
-    global dh
-    # df = pd.read_csv('../../../data/raw_home_automation.csv', header=0, delimiter=",")
-    df = pd.read_csv(DATA_FILE_PATH, header=0, delimiter=",")
-    dh = DataHandler(df, library_name)
     if library_name == "scikit":
-        return get_scikit_model(dh)
+        return get_scikit_model()
     elif library_name == "keras":
-        return get_keras_model(dh)
+        return get_keras_model()
     else:
         return None
 
 def get_scoring_url():
-    wml_credentials=CONFIG["wml_credentials"]
+    wml_credentials=SECRET_CONFIG["wml_credentials"]
     global client
     client = WatsonMachineLearningAPIClient(wml_credentials)
-    deployment_details = client.deployments.get_details(CONFIG["deployment_id"]);
+    deployment_details = client.deployments.get_details(SECRET_CONFIG["deployment_id"]);
     scoring_url = client.deployments.get_scoring_url(deployment_details)
     print("scoring_url: >> ", scoring_url)
     # scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/9ed7fe34-d927-4111-8b95-0e72a3bde6f8/online'
@@ -114,7 +106,7 @@ def get_results(sentence):
       model_handler = get_model_handler(library_name)
 
     if FLAGS.from_cloud:
-        ERROR_THRESHOLD = 0.25
+        ERROR_THRESHOLD = 0.15
         to_predict_arr = model_handler.data_handler.convert_to_predict(sentence)
         if (to_predict_arr.ndim == 1):
             to_predict_arr = np.array([to_predict_arr])
@@ -141,7 +133,7 @@ def get_results(sentence):
 
 
 def classify(_):
-    set_flags()
+    set_config()
     print("Model is ready! You now can enter requests.")
     for query in sys.stdin:
         if query.strip() == "close":
@@ -154,7 +146,7 @@ if __name__ == '__main__':
   parser.add_argument('--data_dir', type=str, default='$DATA_DIR', help='Directory with data')
   parser.add_argument('--result_dir', type=str, default='$RESULT_DIR', help='Directory with results')
   parser.add_argument('--data_file', type=str, default='data.csv', help='File name for Intents and Classes')
-  parser.add_argument('--model_name', type=str, default='my_nlc_model.h5', help='Name of the model')
+  parser.add_argument('--config_file', type=str, default='model_config.json', help='Model Configuration file name')
   parser.add_argument('--from_cloud', type=int, default=False, help='Classify from Model deployed on IBM Cloud')
 
   FLAGS, unparsed = parser.parse_known_args()
