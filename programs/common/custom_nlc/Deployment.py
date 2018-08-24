@@ -86,14 +86,14 @@ def show_bucket_files():
 
 def train_model():
     model_definition_metadata = {
-                client.repository.DefinitionMetaNames.NAME: "HomeAutomation_ML_Model definition",
+                client.repository.DefinitionMetaNames.NAME: "HomeAutomation_NLC_Model definition",
                 client.repository.DefinitionMetaNames.DESCRIPTION: "HomeAutomation_ML_Model description",
                 client.repository.DefinitionMetaNames.AUTHOR_NAME: "Gurvinder Singh",
                 client.repository.DefinitionMetaNames.FRAMEWORK_NAME: "tensorflow",
                 client.repository.DefinitionMetaNames.FRAMEWORK_VERSION: "1.5",
                 client.repository.DefinitionMetaNames.RUNTIME_NAME: "python",
                 client.repository.DefinitionMetaNames.RUNTIME_VERSION: "3.5",
-                client.repository.DefinitionMetaNames.EXECUTION_COMMAND: "python3 build_code/IntentClassification.py"
+                client.repository.DefinitionMetaNames.EXECUTION_COMMAND: "python3 build_code/IntentClassification.py --config_file model_config.json --data_file data.csv"
                 }
 
     compressed_code = "build_code.zip"
@@ -103,7 +103,7 @@ def train_model():
 
     # Configure the training metadata for the TRAINING_DATA_REFERENCE and TRAINING_RESULTS_REFERENCE.
     training_configuration_metadata = {
-                client.training.ConfigurationMetaNames.NAME: "HomeAutomation_ML_Model",
+                client.training.ConfigurationMetaNames.NAME: "HomeAutomation_NLC_Model",
                 client.training.ConfigurationMetaNames.AUTHOR_NAME: "Gurvinder Singh",
                 client.training.ConfigurationMetaNames.DESCRIPTION: "HomeAutomation_ML_Model training description",
                 client.training.ConfigurationMetaNames.COMPUTE_CONFIGURATION: {"name": "k80"},
@@ -140,23 +140,23 @@ def store_model(trained_model_guid):
     print("IN store_model: >>> ", trained_model_guid)
     metadata = {
         client.repository.ModelMetaNames.AUTHOR_NAME: 'Gurvinder Singh',
-        client.repository.ModelMetaNames.NAME: 'my_nlc_model',
+        client.repository.ModelMetaNames.NAME: 'HomeAutomation_NLC_Model',
         client.repository.ModelMetaNames.FRAMEWORK_NAME: 'tensorflow',
         client.repository.ModelMetaNames.FRAMEWORK_VERSION: '1.5',
         client.repository.ModelMetaNames.RUNTIME_NAME: 'python',
         client.repository.ModelMetaNames.RUNTIME_VERSION: '3.5',
         client.repository.ModelMetaNames.FRAMEWORK_LIBRARIES: [{'name':'keras', 'version': '2.1.3'}]
         }
-    # saved_model_details = client.repository.store_model(trained_model_guid, metadata)
-    filename = "results/my_nlc_model.h5"
-    tar_filename = filename + ".tgz"
-    cmdstring = "tar -zcvf " + tar_filename + " " + filename
-    os.system(cmdstring);
+    saved_model_details = client.repository.store_model(trained_model_guid, metadata)
+    # filename = "results/my_nlc_model.h5"
+    # tar_filename = filename + ".tgz"
+    # cmdstring = "tar -zcvf " + tar_filename + " " + filename
+    # os.system(cmdstring);
     saved_model_details = client.repository.store_model(tar_filename, metadata)
     return saved_model_details
 
 def deploy_model(model_uid):
-    deployment_details = client.deployments.create(model_uid, "HomeAutomation_ML_Model_Deploy")
+    deployment_details = client.deployments.create(model_uid, "HomeAutomation_NLC_Model_Deploy")
     scoring_url = client.deployments.get_scoring_url(deployment_details)
     return scoring_url
 
@@ -235,7 +235,7 @@ def retrain_model(definition_uid):
     client.training.monitor_logs(training_run_guid_async)
 
 def update_model(model_uid):
-    model_content = "HomeAutomation_ML_Model.tar.gz"
+    model_content = "HomeAutomation_NLC_Model.tar.gz"
     model_details = client.repository.update_model(model_uid, model_content)
     print(json.dumps(model_details, indent=2))
 
@@ -322,10 +322,10 @@ def deploy_scoring_function(scoring_endpoint):
 
 def process_deployment():
     print("<<<<<< IN process_deployment >>>>>> ")
-    # zipf = zipfile.ZipFile('build_code.zip', 'w', zipfile.ZIP_DEFLATED)
-    # zipdir('build_code', zipf)
-    # zipf.close()
-    # training_run_guid_async = train_model()
+    zipf = zipfile.ZipFile('build_code.zip', 'w', zipfile.ZIP_DEFLATED)
+    zipdir('build_code', zipf)
+    zipf.close()
+    training_run_guid_async = train_model()
     # training_run_guid_async = 'training-YdAPb8pmg'
     # client.training.monitor_logs(training_run_guid_async)
     # status = client.training.get_status(training_run_guid_async)
@@ -347,9 +347,9 @@ def main(_):
     set_config()
     details_to_file()
     # client.training.list()
-    delete_trainings(["training-YdAPb8pmg"])
-    delete_all()
-    # process_deployment()
+    # delete_trainings(["training-YdAPb8pmg"])
+    # delete_all()
+    process_deployment()
     # saved_model_details = store_model('training-KK7C0Utig')
     # print(json.dumps(saved_model_details, indent=2))
     # print("Model Guid: >> ", saved_model_details["entity"]["ml_asset_guid"])
