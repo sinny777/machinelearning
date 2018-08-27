@@ -132,7 +132,7 @@ def store_model(trained_model_guid):
         client.repository.ModelMetaNames.RUNTIME_VERSION: '3.5',
         client.repository.ModelMetaNames.FRAMEWORK_LIBRARIES: [{'name':'keras', 'version': '2.1.3'}]
         }
-    saved_model_details = client.repository.store_model(trained_model_guid, {"name": "HomeAutomation_NLC_Model"})
+    saved_model_details = client.repository.store_model(trained_model_guid, metadata)
     # filename = "results/my_nlc_model.h5"
     # tar_filename = filename + ".tgz"
     # cmdstring = "tar -zcvf " + tar_filename + " " + filename
@@ -152,7 +152,6 @@ def score_generator(params):
         from watson_machine_learning_client import WatsonMachineLearningAPIClient
         client = WatsonMachineLearningAPIClient(params['wml_credentials'])
 
-        max_fatures = 500
         maxlen = 50
 
         preprocessed_records = []
@@ -265,8 +264,8 @@ def zipdir(path, ziph):
         for file in files:
             ziph.write(os.path.join(root, file))
 
+# This function does not work with the Lite plan
 def deploy_scoring_function(scoring_endpoint):
-    # df = load_data()
     file = cos_handler.get_item(buckets[0], FLAGS.data_file)
     df = pd.read_csv(file["Body"])
     data_handler = DataHandler(df, "keras")
@@ -305,21 +304,22 @@ def process_deployment():
     zipdir('build_code', zipf)
     zipf.close()
     training_run_guid_async = train_model()
-    # training_run_guid_async = 'training-NTa3MXpmg'
+    # training_run_guid_async = 'training-ZknMig2ig'
     client.training.monitor_logs(training_run_guid_async)
-    status = client.training.get_status(training_run_guid_async)
-    # while status["state"] != 'completed':
+    status = json.dumps(client.training.get_status(training_run_guid_async), indent=2)
+    print(status)
+    # while status.state != 'completed':
     #     print("Training Status:>> ", status.state )
     #     sleep(5) # Sleep for 5 seconds
     #     status = client.training.get_status(training_run_guid_async)
     # print("<<< Training Completed >>> ")
-    print(json.dumps(status, indent=2))
+
     # saved_model_details = store_model(training_run_guid_async)
     # print(json.dumps(saved_model_details, indent=2))
     # print("Model Guid: >> ", saved_model_details["metadata"]["guid"])
     # scoring_endpoint = deploy_model(saved_model_details["metadata"]["guid"])
     # get_model_details("9d22bc1b-b0d1-4f76-9a3b-e9117387314f")
-    # scoring_endpoint = deploy_model('f46caa2e-1692-4d4a-a064-cbf6391f9053')
+    # scoring_endpoint = deploy_model('4d449972-6e31-408d-bc24-4e9e64fd0584')
     # print("scoring_endpoint", scoring_endpoint)
     # deploy_scoring_function(scoring_endpoint)
 
@@ -331,11 +331,19 @@ def test_cos():
     df = pd.read_csv(file["Body"])
     print(df)
 
+def set_word_index():
+    file = cos_handler.get_item(buckets[0], FLAGS.data_file)
+    df = pd.read_csv(file["Body"])
+    data_handler = DataHandler(df, "keras")
+    cos_handler.create_file(buckets[0], 'word_index.json', json.dumps(data_handler.get_tokenizer().word_index, indent=2))
+
 def main(_):
     set_config()
-    # details_to_file()
-    # delete_all(["training-NTa3MXpmg"])
-    # process_deployment()
+    # set_word_index()
+    details_to_file()
+    # client.training.list()
+    # delete_all(["training-ZknMig2ig"])
+    process_deployment()
     # saved_model_details = store_model('training-NTa3MXpmg')
     # print(json.dumps(saved_model_details, indent=2))
     # print("Model Guid: >> ", saved_model_details["metadata"]["guid"])

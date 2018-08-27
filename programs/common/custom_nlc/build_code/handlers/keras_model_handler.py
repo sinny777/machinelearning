@@ -4,6 +4,7 @@
 import pandas as pd
 import numpy as np
 import random
+import json
 
 import os.path
 from os import path
@@ -32,7 +33,6 @@ class ModelHandler(object):
         class DataSets(object):
             pass
         self.datasets = DataSets()
-        self.prepare_data()
 
     def get_data_handler(self):
         # df = pd.read_csv('../../../data/raw_home_automation.csv', header=0, delimiter=",")
@@ -48,6 +48,7 @@ class ModelHandler(object):
         self.datasets.test = DataSet(X_test, Y_test)
 
     def create_model(self):
+        self.prepare_data()
         K.clear_session()
         tf.reset_default_graph()
         init_g = tf.global_variables_initializer()
@@ -77,6 +78,10 @@ class ModelHandler(object):
           print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
           model.save(self.CONFIG["MODEL_PATH"])
           print("<<<<<<<< ML MODEL CREATED AND SAVED LOCALLY AT: ", self.CONFIG["MODEL_PATH"])
+          word_index_file = os.path.join(self.CONFIG["DATA_DIR"], 'word_index.json')
+          with open(word_index_file, 'w') as outfile:
+               json.dump(self.data_handler.get_tokenizer().word_index, outfile)
+          print("word_index.json file uploaded successfully....")
 
     def load_keras_model(self):
         model = load_model(self.CONFIG["MODEL_PATH"])

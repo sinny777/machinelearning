@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import random
 import re
+import json
 
 import os.path
 from os import path
@@ -19,7 +20,6 @@ class DataHandler(object):
     def __init__(self, dataframe, library_name):
         self.dataframe = dataframe
         self.library_name = library_name
-        self.processed_words = []
         self.intents = []
         self.max_features = 500
         self.maxlen = 50
@@ -54,23 +54,11 @@ class DataHandler(object):
         print("Length of Y: >> ", len(Y))
         return X, Y
 
-    def convert_to_predict(self, text):
-        preprocessed_records = []
-        cleanString = re.sub(r"[!\"#$%&()*+,-./:;<=>?@[\]^_`{|}~]", "", text)
-        splitted_text = cleanString.split()[:self.maxlen]
-        hashed_tokens = []
-
-        for token in splitted_text:
-            index = self.get_tokenizer().word_index.get(token, 0)
-            if index < 501 and index > 0:
-                hashed_tokens.append(index)
-
-        hashed_tokens_size = len(hashed_tokens)
-        padded_tokens = [0]*(self.maxlen - hashed_tokens_size) + hashed_tokens
-        preprocessed_records.append(padded_tokens)
-        return preprocessed_records
-
-        # scoring_payload = {'values': preprocessed_records}
+    def get_intents(self):
+        documents = []
+        self.intents = self.dataframe["intent"].unique()
+        self.intents = sorted(list(set(self.intents)))
+        return self.intents
 
 class DataSet(object):
     def __init__(self, utterances, intents):

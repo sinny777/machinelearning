@@ -14,6 +14,7 @@ import tarfile
 import pandas as pd
 import numpy as np
 import random
+import re
 
 import tensorflow as tf
 import numpy as np
@@ -90,38 +91,41 @@ def get_model_handler(library_name="keras"):
         return None
 
 def get_scoring_url():
-    wml_credentials=SECRET_CONFIG["wml_credentials"]
-    global client
-    client = WatsonMachineLearningAPIClient(wml_credentials)
-    deployment_details = client.deployments.get_details(SECRET_CONFIG["deployment_id"]);
-    scoring_url = client.deployments.get_scoring_url(deployment_details)
-    print("scoring_url: >> ", scoring_url)
-    # scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/9ed7fe34-d927-4111-8b95-0e72a3bde6f8/online'
+    # deployment_details = client.deployments.get_details(SECRET_CONFIG["deployment_id"]);
+    # scoring_url = client.deployments.get_scoring_url(deployment_details)
+    # print("scoring_url: >> ", scoring_url)
+    scoring_url = 'https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/ab5304e7-cc30-44c0-b808-0d74044da792/online'
     return scoring_url
+
+def convert_to_predict(text):
+    preprocessed_records = []
+    maxlen = 50
+
+    cleanString = re.sub(r"[!\"#$%&()*+,-./:;<=>?@[\]^_`{|}~]", "", text)
+    splitted_text = cleanString.split()[:maxlen]
+    hashed_tokens = []
+    for token in splitted_text:
+        # index = self.get_tokenizer().word_index.get(token, 0)
+        index = scoring_params["word_index"].get(token, 0)
+        if index < 501 and index > 0:
+            hashed_tokens.append(index)
+
+    hashed_tokens_size = len(hashed_tokens)
+    padded_tokens = [0]*(maxlen - hashed_tokens_size) + hashed_tokens
+    preprocessed_records.append(padded_tokens)
+    return preprocessed_records
 
 def get_results(sentence):
     ERROR_THRESHOLD = 0.25
-    # print("Going to Classify: >> ", sentence)
-    global model_handler
-    global scoring_url
-    try:
-      model_handler
-    except NameError:
-      model_handler = get_model_handler(library_name)
-
     if FLAGS.from_cloud:
         ERROR_THRESHOLD = 0.15
-        to_predict_arr = model_handler.data_handler.convert_to_predict(sentence)
-        if (to_predict_arr.ndim == 1):
-            to_predict_arr = np.array([to_predict_arr])
-
+        toPredict = convert_to_predict(sentence)
+        # if (to_predict_arr.ndim == 1):
+        #     to_predict_arr = np.array([to_predict_arr])
+        to_predict_arr = np.asarray(toPredict)
         scoring_data = {'values': to_predict_arr.tolist()}
-        try:
-          scoring_url
-        except NameError:
-          scoring_url = get_scoring_url()
         # send scoring dictionary to deployed model to get predictions
-        resp = client.deployments.score(scoring_url, scoring_data)
+        resp = client.deployments.score(scoring_params["scoring_endpoint"], scoring_data)
         result = resp["values"][0][0]
         # filter out predictions below a threshold
         result = [[i,r] for i,r in enumerate(result) if r>ERROR_THRESHOLD]
@@ -129,15 +133,33 @@ def get_results(sentence):
         result.sort(key=lambda x: x[1], reverse=True)
         return_list = []
         for r in result:
-            return_list.append((model_handler.data_handler.intents[r[0]], r[1]))
+            return_list.append((scoring_params["intents"][r[0]], r[1]))
         return return_list
     else:
         return model_handler.predict(sentence)
 
-
+def init_content():
+    set_config()
+    wml_credentials=SECRET_CONFIG["wml_credentials"]
+    global client
+    client = WatsonMachineLearningAPIClient(wml_credentials)
+    global model_handler
+    try:
+      model_handler
+    except NameError:
+      model_handler = get_model_handler(library_name)
+    scoring_endpoint = get_scoring_url()
+    with open('data/word_index.json') as f:
+        word_index = json.load(f)
+    global scoring_params
+    scoring_params = {
+        "scoring_endpoint": scoring_endpoint,
+        "intents": model_handler.data_handler.get_intents(),
+        "word_index": word_index
+    }
 
 def classify(_):
-    set_config()
+    init_content()
     print("Model is ready! You now can enter requests.")
     for query in sys.stdin:
         if query.strip() == "close":
@@ -151,7 +173,7 @@ if __name__ == '__main__':
   parser.add_argument('--result_dir', type=str, default='$RESULT_DIR', help='Directory with results')
   parser.add_argument('--data_file', type=str, default='data.csv', help='File name for Intents and Classes')
   parser.add_argument('--config_file', type=str, default='model_config.json', help='Model Configuration file name')
-  parser.add_argument('--from_cloud', type=int, default=False, help='Classify from Model deployed on IBM Cloud')
+  parser.add_argument('--from_cloud', type=int, default=True, help='Classify from Model deployed on IBM Cloud')
 
   FLAGS, unparsed = parser.parse_known_args()
   print("Start model training")
