@@ -8,6 +8,7 @@ from __future__ import print_function
 import argparse
 import sys
 import os
+from os import environ
 import tarfile
 
 import pandas as pd
@@ -51,9 +52,12 @@ def set_config():
         SECRET_CONFIG = json.load(f)
 
     DATA_FILE_PATH = os.path.join(DATA_DIR, FLAGS.data_file)
-    MODEL_PATH = os.path.join(RESULT_DIR, MODEL_CONFIG["model_name"])
-    MODEL_WEIGHTS_PATH = os.path.join(RESULT_DIR, MODEL_CONFIG["model_weights"])
-    LOG_DIR = os.path.join(RESULT_DIR, MODEL_CONFIG["log_dir"])
+    MODEL_PATH = os.path.join(RESULT_DIR, "model", MODEL_CONFIG["model_name"])
+    MODEL_WEIGHTS_PATH = os.path.join(RESULT_DIR, "model", MODEL_CONFIG["model_weights"])
+    if environ.get('JOB_STATE_DIR') is not None:
+        LOG_DIR = os.path.join(os.environ["JOB_STATE_DIR"], MODEL_CONFIG["log_dir"])
+    else:
+        LOG_DIR = os.path.join(RESULT_DIR, MODEL_CONFIG["log_dir"])
     ensure_dir(DATA_FILE_PATH)
     ensure_dir(MODEL_PATH)
     global CONFIG

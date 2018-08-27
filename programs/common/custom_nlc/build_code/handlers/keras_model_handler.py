@@ -70,9 +70,9 @@ class ModelHandler(object):
           tbCallBack = tf.keras.callbacks.TensorBoard(log_dir=self.CONFIG["LOG_DIR"], write_graph=True)
 
           monitor = EarlyStopping(monitor='val_loss', min_delta=1e-3, patience=self.CONFIG["MODEL_CONFIG"]["patience"], verbose=0, mode='auto')
-          checkpointer = ModelCheckpoint(filepath=self.CONFIG["MODEL_WEIGHTS_PATH"], verbose=0, save_best_only=True) # Save best model
-          model.fit(np.asarray(self.datasets.train.utterances), np.asarray(self.datasets.train.intents), epochs=self.CONFIG["MODEL_CONFIG"]["epochs"], batch_size=self.CONFIG["MODEL_CONFIG"]["batch_size"],  verbose=1, validation_split=0.02, callbacks=[tbCallBack, monitor, checkpointer])
-          model.load_weights(self.CONFIG["MODEL_WEIGHTS_PATH"]) # load weights from best model
+          # checkpointer = ModelCheckpoint(filepath=self.CONFIG["MODEL_WEIGHTS_PATH"], verbose=0, save_best_only=True) # Save best model
+          model.fit(np.asarray(self.datasets.train.utterances), np.asarray(self.datasets.train.intents), epochs=self.CONFIG["MODEL_CONFIG"]["epochs"], batch_size=self.CONFIG["MODEL_CONFIG"]["batch_size"],  verbose=1, validation_split=0.02, callbacks=[tbCallBack, monitor])
+          # model.load_weights(self.CONFIG["MODEL_WEIGHTS_PATH"]) # load weights from best model
           scores = model.evaluate(np.asarray(self.datasets.test.utterances), np.asarray(self.datasets.test.intents))
           print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
           model.save(self.CONFIG["MODEL_PATH"])
@@ -80,7 +80,7 @@ class ModelHandler(object):
 
     def load_keras_model(self):
         model = load_model(self.CONFIG["MODEL_PATH"])
-        model.load_weights(self.CONFIG["MODEL_WEIGHTS_PATH"]) # load weights from best model
+        # model.load_weights(self.CONFIG["MODEL_WEIGHTS_PATH"]) # load weights from best model
         return model
 
     def predict(self, text):

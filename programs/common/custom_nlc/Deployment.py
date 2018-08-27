@@ -7,16 +7,14 @@ import tensorflow as tf
 import argparse
 import sys
 import os
+from os import environ
 import zipfile
 import types
 import pandas as pd
 from time import sleep
 
 from build_code.handlers.data_handler import DataHandler
-
-# Install the boto library.
-import ibm_boto3
-from ibm_botocore.client import Config
+from build_code.handlers.cos_handler import COSHandler
 
 import urllib3, requests, json, base64, time, os, wget
 
@@ -28,15 +26,8 @@ with open('config.json', 'r') as f:
     global SECRET_CONFIG
     SECRET_CONFIG = json.load(f)
 
-cos_credentials = SECRET_CONFIG["cos_credentials"]
-
-cos = ibm_boto3.client(service_name='s3',
-        ibm_api_key_id=cos_credentials['apikey'],
-        ibm_auth_endpoint=SECRET_CONFIG["auth_endpoint"],
-        config=Config(signature_version='oauth'),
-        endpoint_url=SECRET_CONFIG["service_endpoint"])
-
 client = WatsonMachineLearningAPIClient(SECRET_CONFIG["wml_credentials"])
+cos_handler = COSHandler(SECRET_CONFIG)
 
 FLAGS = None
 
@@ -60,9 +51,12 @@ def set_config():
         MODEL_CONFIG = json.load(f)
 
     DATA_FILE_PATH = os.path.join(DATA_DIR, FLAGS.data_file)
-    MODEL_PATH = os.path.join(RESULT_DIR, MODEL_CONFIG["model_name"])
-    MODEL_WEIGHTS_PATH = os.path.join(RESULT_DIR, MODEL_CONFIG["model_weights"])
-    LOG_DIR = os.path.join(RESULT_DIR, MODEL_CONFIG["log_dir"])
+    MODEL_PATH = os.path.join(RESULT_DIR, "model", MODEL_CONFIG["model_name"])
+    MODEL_WEIGHTS_PATH = os.path.join(RESULT_DIR, "model", MODEL_CONFIG["model_weights"])
+    if environ.get('JOB_STATE_DIR') is not None:
+        LOG_DIR = os.path.join(os.environ["JOB_STATE_DIR"], MODEL_CONFIG["log_dir"])
+    else:
+        LOG_DIR = os.path.join(RESULT_DIR, MODEL_CONFIG["log_dir"])
     ensure_dir(DATA_FILE_PATH)
     ensure_dir(MODEL_PATH)
     global CONFIG
@@ -75,14 +69,6 @@ def set_config():
                 "LOG_DIR": LOG_DIR,
                 "MODEL_CONFIG": MODEL_CONFIG
              }
-
-# print(list(cos.buckets.all()))
-def show_bucket_files():
-    for bucket_name in buckets:
-        print(bucket_name)
-        bucket_obj = cos.Bucket(bucket_name)
-        for obj in bucket_obj.objects.all():
-            print("  File: {}, {:4.2f}kB".format(obj.key, obj.size/1024))
 
 def train_model():
     model_definition_metadata = {
@@ -110,10 +96,10 @@ def train_model():
                 client.training.ConfigurationMetaNames.TRAINING_DATA_REFERENCE: {
                     "connection": {
                         "endpoint_url": SECRET_CONFIG["service_endpoint"],
-                        "access_key_id": cos_credentials['cos_hmac_keys']['access_key_id'],
-                        "secret_access_key": cos_credentials['cos_hmac_keys']['secret_access_key']
+                        "access_key_id": SECRET_CONFIG["cos_credentials"]['cos_hmac_keys']['access_key_id'],
+                        "secret_access_key": SECRET_CONFIG["cos_credentials"]['cos_hmac_keys']['secret_access_key']
                     },
-                    "location": {
+                    "source": {
                         "bucket": buckets[0],
                     },
                     "type": "s3"
@@ -121,10 +107,10 @@ def train_model():
                 client.training.ConfigurationMetaNames.TRAINING_RESULTS_REFERENCE: {
                     "connection": {
                         "endpoint_url": SECRET_CONFIG["service_endpoint"],
-                        "access_key_id": cos_credentials['cos_hmac_keys']['access_key_id'],
-                        "secret_access_key": cos_credentials['cos_hmac_keys']['secret_access_key']
+                        "access_key_id": SECRET_CONFIG["cos_credentials"]['cos_hmac_keys']['access_key_id'],
+                        "secret_access_key": SECRET_CONFIG["cos_credentials"]['cos_hmac_keys']['secret_access_key']
                     },
-                    "location": {
+                    "target": {
                         "bucket": buckets[1],
                     },
                     "type": "s3"
@@ -133,7 +119,6 @@ def train_model():
 
     training_run_details = client.training.run(definition_uid, training_configuration_metadata)
     training_run_guid_async = client.training.get_run_uid(training_run_details)
-    client.training.monitor_logs(training_run_guid_async)
     return training_run_guid_async
 
 def store_model(trained_model_guid):
@@ -147,12 +132,12 @@ def store_model(trained_model_guid):
         client.repository.ModelMetaNames.RUNTIME_VERSION: '3.5',
         client.repository.ModelMetaNames.FRAMEWORK_LIBRARIES: [{'name':'keras', 'version': '2.1.3'}]
         }
-    saved_model_details = client.repository.store_model(trained_model_guid, metadata)
+    saved_model_details = client.repository.store_model(trained_model_guid, {"name": "HomeAutomation_NLC_Model"})
     # filename = "results/my_nlc_model.h5"
     # tar_filename = filename + ".tgz"
     # cmdstring = "tar -zcvf " + tar_filename + " " + filename
     # os.system(cmdstring);
-    saved_model_details = client.repository.store_model(tar_filename, metadata)
+    # saved_model_details = client.repository.store_model(tar_filename, metadata)
     return saved_model_details
 
 def deploy_model(model_uid):
@@ -253,16 +238,19 @@ def get_model_details(model_uid):
          json.dump(model_details, outfile)
     print(json.dumps(model_details, indent=2))
 
-def delete_trainings(trainings):
-    for t in trainings:
-        client.training.delete(t)
-
 def details_to_file():
     details = client.repository.get_details()
     with open('details.json', 'w') as outfile:
          json.dump(details, outfile)
 
-def delete_all():
+def delete_trainings(trainings):
+    for t in trainings:
+        client.training.delete(t)
+
+def delete_all(trainings):
+    # client.training.list()
+    delete_trainings(trainings)
+    details_to_file()
     # details = client.repository.get_details()
     with open('details.json') as f:
         data = json.load(f)
@@ -277,18 +265,10 @@ def zipdir(path, ziph):
         for file in files:
             ziph.write(os.path.join(root, file))
 
-def load_data():
-    def __iter__(self): return 0
-    # The following code accesses a file in your IBM Cloud Object Storage. It includes your credentials.
-    body = cos.get_object(Bucket=buckets[0],Key=FLAGS.data_file)['Body']
-    # add missing __iter__ method, so pandas accepts body as file-like object
-    if not hasattr(body, "__iter__"): body.__iter__ = types.MethodType( __iter__, body )
-
-    df = pd.read_csv(body)
-    return df
-
 def deploy_scoring_function(scoring_endpoint):
-    df = load_data()
+    # df = load_data()
+    file = cos_handler.get_item(buckets[0], FLAGS.data_file)
+    df = pd.read_csv(file["Body"])
     data_handler = DataHandler(df, "keras")
     ai_params = {
         'scoring_endpoint': scoring_endpoint,
@@ -296,19 +276,19 @@ def deploy_scoring_function(scoring_endpoint):
         'word_index': data_handler.get_tokenizer().word_index
     }
     ai_function = score_generator(ai_params)
-    runtime_meta = {
-            client.runtime_specs.ConfigurationMetaNames.NAME: "Runtime specification",
-            client.runtime_specs.ConfigurationMetaNames.PLATFORM: {
-               "name": "python",
-               "version": "3.5"
-            }
-    }
-    runtime_details = client.runtime_specs.create(meta_props=runtime_meta)
-    runtime_url = client.runtime_specs.get_url(runtime_details)
-    print(runtime_url)
+    # runtime_meta = {
+    #         client.runtime_specs.ConfigurationMetaNames.NAME: "Runtime specification",
+    #         client.runtime_specs.ConfigurationMetaNames.PLATFORM: {
+    #            "name": "python",
+    #            "version": "3.5"
+    #         }
+    # }
+    # runtime_details = client.runtime_specs.create(meta_props=runtime_meta)
+    # runtime_url = client.runtime_specs.get_url(runtime_details)
+    # print(runtime_url)
     meta_data = {
         client.repository.FunctionMetaNames.NAME: 'MyNLC Scoring - AI Function',
-        client.repository.FunctionMetaNames.RUNTIME_URL: runtime_url
+        # client.repository.FunctionMetaNames.RUNTIME_URL: runtime_url
     }
 
     function_details = client.repository.store_function(meta_props=meta_data, function=ai_function)
@@ -319,43 +299,50 @@ def deploy_scoring_function(scoring_endpoint):
     print(ai_function_scoring_endpoint)
 
 
-
 def process_deployment():
     print("<<<<<< IN process_deployment >>>>>> ")
     zipf = zipfile.ZipFile('build_code.zip', 'w', zipfile.ZIP_DEFLATED)
     zipdir('build_code', zipf)
     zipf.close()
     training_run_guid_async = train_model()
-    # training_run_guid_async = 'training-YdAPb8pmg'
-    # client.training.monitor_logs(training_run_guid_async)
-    # status = client.training.get_status(training_run_guid_async)
+    # training_run_guid_async = 'training-NTa3MXpmg'
+    client.training.monitor_logs(training_run_guid_async)
+    status = client.training.get_status(training_run_guid_async)
     # while status["state"] != 'completed':
     #     print("Training Status:>> ", status.state )
     #     sleep(5) # Sleep for 5 seconds
     #     status = client.training.get_status(training_run_guid_async)
     # print("<<< Training Completed >>> ")
-    # print(json.dumps(status, indent=2))
+    print(json.dumps(status, indent=2))
     # saved_model_details = store_model(training_run_guid_async)
     # print(json.dumps(saved_model_details, indent=2))
     # print("Model Guid: >> ", saved_model_details["metadata"]["guid"])
     # scoring_endpoint = deploy_model(saved_model_details["metadata"]["guid"])
     # get_model_details("9d22bc1b-b0d1-4f76-9a3b-e9117387314f")
-    # scoring_endpoint = deploy_model('94f4e3a6-3a7c-4bb2-a80d-fbced9fd922d')
+    # scoring_endpoint = deploy_model('f46caa2e-1692-4d4a-a064-cbf6391f9053')
+    # print("scoring_endpoint", scoring_endpoint)
     # deploy_scoring_function(scoring_endpoint)
+
+def test_cos():
+    files = cos_handler.get_bucket_contents(buckets[1])
+    for file in files:
+        print("Item: {0} ({1} bytes).".format(file.key, file.size))
+    file = cos_handler.get_item(buckets[0], FLAGS.data_file)
+    df = pd.read_csv(file["Body"])
+    print(df)
 
 def main(_):
     set_config()
-    details_to_file()
-    # client.training.list()
-    # delete_trainings(["training-YdAPb8pmg"])
-    # delete_all()
-    process_deployment()
-    # saved_model_details = store_model('training-KK7C0Utig')
+    # details_to_file()
+    # delete_all(["training-NTa3MXpmg"])
+    # process_deployment()
+    # saved_model_details = store_model('training-NTa3MXpmg')
     # print(json.dumps(saved_model_details, indent=2))
-    # print("Model Guid: >> ", saved_model_details["entity"]["ml_asset_guid"])
-    #
-    # model = client.repository.load('9d22bc1b-b0d1-4f76-9a3b-e9117387314f')
-    # client.repository.download('9d22bc1b-b0d1-4f76-9a3b-e9117387314f', 'my_model.tar.gz')
+    # print("Model Guid: >> ", saved_model_details["metadata"]["guid"])
+    # model = client.repository.load('4b60fdd5-0559-4911-9d71-0713337ea16d')
+    # scoring_endpoint = deploy_model('f46caa2e-1692-4d4a-a064-cbf6391f9053')
+    # print("scoring_endpoint", scoring_endpoint)
+    # deploy_scoring_function(scoring_endpoint)
 
 
 if __name__ == '__main__':
