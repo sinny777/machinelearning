@@ -6,7 +6,7 @@ from scipy.io import loadmat
 import tarfile
 from six.moves import urllib
 import pkg_resources
-
+import json
 import pandas as pd
 import tensorflow as tf
 from PIL import Image
@@ -15,8 +15,18 @@ from collections import namedtuple, OrderedDict
 
 class PreProcess(object):
     def __init__(self):
-        self.processed_words = []
-        self.intents = []
+        print("Init Preprocess >>>>>> ")
+
+    def prepare_dataset(self, json_file_path):
+        with open(json_file_path, 'r') as f:
+            json_file = json.load(f)
+            # print(json_file)
+            for i, d in enumerate(json_file["data"]):
+                print("{0}): {1}".format(i, d["content"]))
+                if i<=500:
+                    urllib.request.urlretrieve(d["content"], "data/images/license_plates/train/"+str(i)+".jpg")
+                else:
+                    urllib.request.urlretrieve(d["content"], "data/images/license_plates/test/"+str(i)+".jpg")
 
     def classes_from_mat(self, matfilepath):
         data = loadmat(matfilepath)

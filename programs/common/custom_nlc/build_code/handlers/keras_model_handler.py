@@ -88,19 +88,19 @@ class ModelHandler(object):
         # model.load_weights(self.CONFIG["MODEL_WEIGHTS_PATH"]) # load weights from best model
         return model
 
-    def predict(self, text):
+    def predict(self, texts):
         ERROR_THRESHOLD = 0.15
         model = self.load_keras_model()
-        toPredict = self.data_handler.convert_to_predict(text)
+        toPredict = self.data_handler.convert_to_predict(texts)
         predictions = model.predict(np.asarray(toPredict))[0]
         # np.argmax(predictions[0])
         # filter out predictions below a threshold
-        predictions = [[i,r] for i,r in enumerate(predictions) if r>ERROR_THRESHOLD]
+        # predictions = [[i,r] for i,r in enumerate(predictions) if r>ERROR_THRESHOLD]
         # sort by strength of probability
-        predictions.sort(key=lambda x: x[1], reverse=True)
-        print("predictions: >> ", predictions)
-        return_list = []
-        for r in predictions:
-            return_list.append((self.data_handler.intents[r[0]], r[1]))
+        # predictions.sort(key=lambda x: x[1], reverse=True)
+        # print("predictions: >> ", predictions)
+        # return_list = []
+        # for r in predictions:
+        #     return_list.append((self.data_handler.intents[r[0]], r[1]))
         # return tuple of intent and probability
-        return return_list
+        return predictions

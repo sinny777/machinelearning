@@ -1,0 +1,700 @@
+{
+  "models": {
+    "resources": [{
+      "metadata": {
+        "guid": "8da44cd5-690e-4c16-ba11-0e672e32ee52",
+        "url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/8da44cd5-690e-4c16-ba11-0e672e32ee52",
+        "created_at": "2019-03-07T08:49:22.721Z",
+        "modified_at": "2019-03-07T08:49:32.723Z"
+      },
+      "entity": {
+        "runtime_environment": "spark-2.3",
+        "learning_configuration_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/8da44cd5-690e-4c16-ba11-0e672e32ee52/learning_configuration",
+        "name": "GermanCreditRiskModel",
+        "label_col": "Risk",
+        "learning_iterations_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/8da44cd5-690e-4c16-ba11-0e672e32ee52/learning_iterations",
+        "training_data_schema": {
+          "fields": [{
+            "metadata": {},
+            "name": "CheckingStatus",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "LoanDuration",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {},
+            "name": "CreditHistory",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "LoanPurpose",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "LoanAmount",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {},
+            "name": "ExistingSavings",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "EmploymentDuration",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "InstallmentPercent",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {},
+            "name": "Sex",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "OthersOnLoan",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "CurrentResidenceDuration",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {},
+            "name": "OwnsProperty",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "Age",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {},
+            "name": "InstallmentPlans",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "Housing",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "ExistingCreditsCount",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {},
+            "name": "Job",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "Dependents",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {},
+            "name": "Telephone",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {},
+            "name": "ForeignWorker",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "target",
+              "values": ["No Risk", "Risk"]
+            },
+            "name": "Risk",
+            "nullable": true,
+            "type": "string"
+          }],
+          "type": "struct"
+        },
+        "feedback_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/8da44cd5-690e-4c16-ba11-0e672e32ee52/feedback",
+        "latest_version": {
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/models/8da44cd5-690e-4c16-ba11-0e672e32ee52/versions/0e73872a-a79a-4409-aa26-2574168757fb",
+          "guid": "0e73872a-a79a-4409-aa26-2574168757fb",
+          "created_at": "2019-03-07T08:49:22.863Z"
+        },
+        "model_type": "mllib-2.3",
+        "deployments": {
+          "count": 1,
+          "url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/8da44cd5-690e-4c16-ba11-0e672e32ee52/deployments"
+        },
+        "deployed_version": {
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/models/8da44cd5-690e-4c16-ba11-0e672e32ee52/versions/0e73872a-a79a-4409-aa26-2574168757fb",
+          "guid": "0e73872a-a79a-4409-aa26-2574168757fb"
+        },
+        "evaluation_metrics_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/8da44cd5-690e-4c16-ba11-0e672e32ee52/evaluation_metrics",
+        "input_data_schema": {
+          "fields": [{
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "CheckingStatus",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "LoanDuration",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "CreditHistory",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "LoanPurpose",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "LoanAmount",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "ExistingSavings",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "EmploymentDuration",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "InstallmentPercent",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "Sex",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "OthersOnLoan",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "CurrentResidenceDuration",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "OwnsProperty",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "Age",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "InstallmentPlans",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "Housing",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "ExistingCreditsCount",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "Job",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "Dependents",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "Telephone",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "ForeignWorker",
+            "nullable": true,
+            "type": "string"
+          }],
+          "type": "struct"
+        },
+        "output_data_schema": {
+          "fields": [{
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "CheckingStatus",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "LoanDuration",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "CreditHistory",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "LoanPurpose",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "LoanAmount",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "ExistingSavings",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "EmploymentDuration",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "InstallmentPercent",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "Sex",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "OthersOnLoan",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "CurrentResidenceDuration",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "OwnsProperty",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "Age",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "InstallmentPlans",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "Housing",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "ExistingCreditsCount",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "Job",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "feature"
+            },
+            "name": "Dependents",
+            "nullable": true,
+            "type": "integer"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "Telephone",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "measure": "discrete",
+              "modeling_role": "feature"
+            },
+            "name": "ForeignWorker",
+            "nullable": true,
+            "type": "string"
+          }, {
+            "metadata": {
+              "modeling_role": "probability"
+            },
+            "name": "probability",
+            "nullable": true,
+            "type": {
+              "containsNull": true,
+              "elementType": "double",
+              "type": "array"
+            }
+          }, {
+            "metadata": {
+              "modeling_role": "prediction"
+            },
+            "name": "prediction",
+            "nullable": true,
+            "type": "double"
+          }, {
+            "metadata": {
+              "modeling_role": "decoded-target",
+              "values": ["No Risk", "Risk"]
+            },
+            "name": "predictedLabel",
+            "nullable": true,
+            "type": "string"
+          }],
+          "type": "struct"
+        }
+      }
+    }, {
+      "metadata": {
+        "guid": "54eeb35f-dac7-4e6c-a95b-cfe949c6d11f",
+        "url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f",
+        "created_at": "2019-03-01T08:26:25.387Z",
+        "modified_at": "2019-03-01T08:26:33.650Z"
+      },
+      "entity": {
+        "runtime_environment": "python-3.5",
+        "learning_configuration_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f/learning_configuration",
+        "author": {
+          "name": "Gurvinder Singh"
+        },
+        "name": "HomeAutomation_NLC_Model",
+        "description": "HomeAutomation_ML_Model training description",
+        "learning_iterations_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f/learning_iterations",
+        "feedback_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f/feedback",
+        "latest_version": {
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f/versions/1d02b4a2-c8f7-4789-ab7a-3336e8fbb581",
+          "guid": "1d02b4a2-c8f7-4789-ab7a-3336e8fbb581",
+          "created_at": "2019-03-01T08:26:25.447Z"
+        },
+        "model_type": "tensorflow-1.5",
+        "deployments": {
+          "count": 1,
+          "url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f/deployments"
+        },
+        "deployed_version": {
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f/versions/1d02b4a2-c8f7-4789-ab7a-3336e8fbb581",
+          "guid": "1d02b4a2-c8f7-4789-ab7a-3336e8fbb581"
+        },
+        "evaluation_metrics_url": "https://us-south.ml.cloud.ibm.com/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f/evaluation_metrics"
+      }
+    }]
+  },
+  "definitions": {
+    "resources": [{
+      "metadata": {
+        "guid": "88bd4180-47be-4b2b-ae4c-9423d0b39cb3",
+        "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/88bd4180-47be-4b2b-ae4c-9423d0b39cb3",
+        "created_at": "2019-03-01T08:21:59.205Z",
+        "modified_at": "2019-03-01T08:21:59.263Z"
+      },
+      "entity": {
+        "author": {
+          "name": "Gurvinder Singh"
+        },
+        "name": "HomeAutomation_NLC_Model definition",
+        "description": "HomeAutomation_ML_Model description",
+        "command": "python3 build_code/IntentClassification.py --config_file model_config.json --data_file data.csv",
+        "framework": {
+          "name": "tensorflow",
+          "version": "1.5",
+          "runtimes": [{
+            "name": "python",
+            "version": "3.5"
+          }]
+        },
+        "training_definition_version": {
+          "guid": "441adcb0-d7a2-40a2-b101-493a4e3d18ee",
+          "url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/88bd4180-47be-4b2b-ae4c-9423d0b39cb3/versions/441adcb0-d7a2-40a2-b101-493a4e3d18ee",
+          "content_url": "https://us-south.ml.cloud.ibm.com/v3/ml_assets/training_definitions/88bd4180-47be-4b2b-ae4c-9423d0b39cb3/versions/441adcb0-d7a2-40a2-b101-493a4e3d18ee/content",
+          "content_status": {
+            "state": "no_content"
+          }
+        }
+      }
+    }]
+  },
+  "experiments": {
+    "resources": []
+  },
+  "runtimes": {
+    "resources": [{
+      "metadata": {
+        "guid": "bfa79423-593e-4ab7-b77a-1f8193c139e8",
+        "url": "https://us-south.ml.cloud.ibm.com/v4/runtimes/bfa79423-593e-4ab7-b77a-1f8193c139e8",
+        "created_at": "2019-03-01T08:26:50.434Z"
+      },
+      "entity": {
+        "name": "MyNLC Scoring - AI Function_py_3.5",
+        "platform": {
+          "name": "python",
+          "version": "3.5"
+        },
+        "custom_libraries": [],
+        "content_url": "https://us-south.ml.cloud.ibm.com/v4/runtimes/bfa79423-593e-4ab7-b77a-1f8193c139e8/content"
+      }
+    }]
+  },
+  "libraries": {
+    "resources": []
+  },
+  "deployments": {
+    "resources": [{
+      "metadata": {
+        "guid": "0469153e-bc95-4339-98d0-4ff63d0529d7",
+        "url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/0469153e-bc95-4339-98d0-4ff63d0529d7",
+        "created_at": "2019-03-07T08:49:32.444Z",
+        "modified_at": "2019-03-07T08:49:32.698Z"
+      },
+      "entity": {
+        "runtime_environment": "spark-2.3",
+        "name": "GermanCreditRiskModel",
+        "scoring_url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/0469153e-bc95-4339-98d0-4ff63d0529d7/online",
+        "deployable_asset": {
+          "name": "GermanCreditRiskModel",
+          "url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/8da44cd5-690e-4c16-ba11-0e672e32ee52",
+          "guid": "8da44cd5-690e-4c16-ba11-0e672e32ee52",
+          "created_at": "2019-03-07T08:49:32.423Z",
+          "type": "model"
+        },
+        "description": "Created by Watson OpenScale Fast Path.",
+        "published_model": {
+          "url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/8da44cd5-690e-4c16-ba11-0e672e32ee52",
+          "guid": "8da44cd5-690e-4c16-ba11-0e672e32ee52",
+          "created_at": "2019-03-07T08:49:32.423Z",
+          "name": "GermanCreditRiskModel"
+        },
+        "status_details": {
+          "status": "DEPLOY_SUCCESS"
+        },
+        "model_type": "mllib-2.3",
+        "status": "DEPLOY_SUCCESS",
+        "type": "online",
+        "deployed_version": {
+          "url": "https://ibm-watson-ml.mybluemix.net/v3/ml_assets/models/8da44cd5-690e-4c16-ba11-0e672e32ee52/versions/0e73872a-a79a-4409-aa26-2574168757fb",
+          "guid": "0e73872a-a79a-4409-aa26-2574168757fb"
+        }
+      }
+    }, {
+      "metadata": {
+        "guid": "82674972-5185-4f8b-8096-fd7c83264567",
+        "url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/82674972-5185-4f8b-8096-fd7c83264567",
+        "created_at": "2019-03-01T08:27:00.926Z",
+        "modified_at": "2019-03-01T08:27:01.114Z"
+      },
+      "entity": {
+        "runtime_environment": "python-3.5",
+        "name": "MyNLC Scoring - AI Function Deployment",
+        "scoring_url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/82674972-5185-4f8b-8096-fd7c83264567/online",
+        "deployable_asset": {
+          "name": "MyNLC Scoring - AI Function",
+          "url": "https://ibm-watson-ml.mybluemix.net/v4/functions/3e8d0bc9-eecd-4e1d-bc03-705385f9192c",
+          "guid": "3e8d0bc9-eecd-4e1d-bc03-705385f9192c",
+          "created_at": "2019-03-01T08:26:54.259Z",
+          "type": "function"
+        },
+        "description": "Description of deployment",
+        "status_details": {
+          "status": "DEPLOY_SUCCESS"
+        },
+        "model_type": "n/a",
+        "status": "DEPLOY_SUCCESS",
+        "type": "online",
+        "deployed_version": {
+          "url": "https://ibm-watson-ml.mybluemix.net/v4/functions/3e8d0bc9-eecd-4e1d-bc03-705385f9192c/revisions/8cdc9a39-e3dc-4585-b01a-54e07ec33516",
+          "guid": "8cdc9a39-e3dc-4585-b01a-54e07ec33516",
+          "created_at": "2019-03-01T08:26:54.259Z"
+        }
+      }
+    }, {
+      "metadata": {
+        "guid": "d40bf5d5-d818-42c2-a375-85b3f64f1d35",
+        "url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/d40bf5d5-d818-42c2-a375-85b3f64f1d35",
+        "created_at": "2019-03-01T08:26:33.353Z",
+        "modified_at": "2019-03-01T08:26:33.622Z"
+      },
+      "entity": {
+        "runtime_environment": "python-3.5",
+        "name": "HomeAutomation_NLC_Model_Deploy",
+        "scoring_url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/deployments/d40bf5d5-d818-42c2-a375-85b3f64f1d35/online",
+        "deployable_asset": {
+          "name": "HomeAutomation_NLC_Model",
+          "url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f",
+          "guid": "54eeb35f-dac7-4e6c-a95b-cfe949c6d11f",
+          "description": "HomeAutomation_ML_Model training description",
+          "created_at": "2019-03-01T08:26:33.331Z",
+          "type": "model"
+        },
+        "description": "Description of deployment",
+        "published_model": {
+          "author": {
+            "name": "Gurvinder Singh"
+          },
+          "name": "HomeAutomation_NLC_Model",
+          "url": "https://ibm-watson-ml.mybluemix.net/v3/wml_instances/e7e44faf-ff8d-4183-9f37-434e2dcd6852/published_models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f",
+          "guid": "54eeb35f-dac7-4e6c-a95b-cfe949c6d11f",
+          "description": "HomeAutomation_ML_Model training description",
+          "created_at": "2019-03-01T08:26:33.331Z"
+        },
+        "status_details": {
+          "status": "DEPLOY_SUCCESS"
+        },
+        "model_type": "tensorflow-1.5",
+        "status": "DEPLOY_SUCCESS",
+        "type": "online",
+        "deployed_version": {
+          "url": "https://ibm-watson-ml.mybluemix.net/v3/ml_assets/models/54eeb35f-dac7-4e6c-a95b-cfe949c6d11f/versions/1d02b4a2-c8f7-4789-ab7a-3336e8fbb581",
+          "guid": "1d02b4a2-c8f7-4789-ab7a-3336e8fbb581"
+        }
+      }
+    }]
+  },
+  "functions": {
+    "resources": [{
+      "metadata": {
+        "guid": "3e8d0bc9-eecd-4e1d-bc03-705385f9192c",
+        "url": "https://us-south.ml.cloud.ibm.com/v4/functions/3e8d0bc9-eecd-4e1d-bc03-705385f9192c",
+        "created_at": "2019-03-01T08:26:54.259Z",
+        "modified_at": "2019-03-01T08:26:54.317Z"
+      },
+      "entity": {
+        "name": "MyNLC Scoring - AI Function",
+        "region": "us-south",
+        "function_revision": {
+          "url": "https://us-south.ml.cloud.ibm.com/v4/functions/3e8d0bc9-eecd-4e1d-bc03-705385f9192c/revisions/8cdc9a39-e3dc-4585-b01a-54e07ec33516",
+          "content_url": "https://us-south.ml.cloud.ibm.com/v4/functions/3e8d0bc9-eecd-4e1d-bc03-705385f9192c/revisions/8cdc9a39-e3dc-4585-b01a-54e07ec33516/content"
+        },
+        "type": "python",
+        "revision_number": "1",
+        "instance_id": "e7e44faf-ff8d-4183-9f37-434e2dcd6852",
+        "runtime": {
+          "url": "https://ibm-watson-ml.mybluemix.net/v4/runtimes/bfa79423-593e-4ab7-b77a-1f8193c139e8"
+        }
+      }
+    }]
+  }
+}

@@ -1,0 +1,47 @@
+
+PREREQUISITES
+-------------
+
+Managing Python environments using Anaconda
+--------------------------------------------
+Step 1:
+> conda create -n python27 python=2.7 anaconda
+
+Then, to activate the new environment, simply use the command:
+> source activate python27
+
+To Deactivate:
+deactivate python27
+
+Step 2:
+> pip install -U pip
+> pip install --upgrade virtualenv
+
+
+OTHER WAY TO USE VIRTUAL ENV
+----------------------------
+cd your-project
+> virtualenv --python python2 env
+
+> source env/bin/activate
+
+LAB
+-----------------
+username: google976057_student@qwiklabs.net
+password: cv9q5B8FsLYs
+ProjectId: qwiklabs-gcp-43d84abf73cced87
+
+gcloud compute zones list
+
+datalab create mydatalabvm --zone asia-south1-a
+
+if interrupted then run following command:
+datalab connect mydatalabvm
+
+
+%bash
+git clone https://github.com/GoogleCloudPlatform/training-data-analyst
+rm -rf training-data-analyst/.git
+
+
+gsutil -m cp -r gs://cloud-training-demos/babyweight/preproc gs://your-bucket/

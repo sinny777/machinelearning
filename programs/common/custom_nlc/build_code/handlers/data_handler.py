@@ -55,10 +55,27 @@ class DataHandler(object):
         return X, Y
 
     def get_intents(self):
-        documents = []
         self.intents = self.dataframe["intent"].unique()
         self.intents = sorted(list(set(self.intents)))
         return self.intents
+
+    def convert_to_predict(self, texts):
+        preprocessed_records = []
+        maxlen = 50
+        for text in texts:
+            cleanString = re.sub(r"[!\"#$%&()*+,-./:;<=>?@[\]^_`{|}~]", "", text)
+            splitted_text = cleanString.split()[:maxlen]
+            hashed_tokens = []
+            for token in splitted_text:
+                index = self.get_tokenizer().word_index.get(token, 0)
+                # index = scoring_params["word_index"].get(token, 0)
+                if index < 501 and index > 0:
+                    hashed_tokens.append(index)
+
+            hashed_tokens_size = len(hashed_tokens)
+            padded_tokens = [0]*(maxlen - hashed_tokens_size) + hashed_tokens
+            preprocessed_records.append(padded_tokens)
+        return preprocessed_records
 
 class DataSet(object):
     def __init__(self, utterances, intents):

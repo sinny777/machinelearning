@@ -82,6 +82,7 @@ def object_detection_function():
     direction = 'waiting...'
     size = 'waiting...'
     color = 'waiting...'
+    counter = 0
     with detection_graph.as_default():
         with tf.Session(graph=detection_graph) as sess:
             # Definite input and output Tensors for detection_graph
@@ -113,20 +114,22 @@ def object_detection_function():
                              feed_dict={image_tensor: image_np_expanded})
 
                 # Visualization of the results of a detection.
-                (counter, csv_line) = \
+                output = \
                     vis_util.visualize_boxes_and_labels_on_image_array(
-                    cap.get(1),
                     input_frame,
                     np.squeeze(boxes),
                     np.squeeze(classes).astype(np.int32),
                     np.squeeze(scores),
                     category_index,
                     use_normalized_coordinates=True,
-                    line_thickness=4
+                    max_boxes_to_draw=20,
+                    min_score_thresh=.5,
+                    agnostic_mode=False,
+                    instance_masks=None,
+                    keypoints=None,
+                    line_thickness=2
                     )
 
-                total_passed_vehicle = total_passed_vehicle + counter
-                
                 # insert information text to video frame
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 cv2.putText(
@@ -168,58 +171,33 @@ def object_detection_function():
                     1,
                     cv2.FONT_HERSHEY_SIMPLEX,
                     )
-                cv2.putText(
-                    input_frame,
-                    '-Movement Direction: ' + direction,
-                    (14, 302),
-                    font,
-                    0.4,
-                    (0xFF, 0xFF, 0xFF),
-                    1,
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL,
-                    )
-                cv2.putText(
-                    input_frame,
-                    '-Speed(km/h): ' + speed,
-                    (14, 312),
-                    font,
-                    0.4,
-                    (0xFF, 0xFF, 0xFF),
-                    1,
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL,
-                    )
-                cv2.putText(
-                    input_frame,
-                    '-Color: ' + color,
-                    (14, 322),
-                    font,
-                    0.4,
-                    (0xFF, 0xFF, 0xFF),
-                    1,
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL,
-                    )
-                cv2.putText(
-                    input_frame,
-                    '-Vehicle Size/Type: ' + size,
-                    (14, 332),
-                    font,
-                    0.4,
-                    (0xFF, 0xFF, 0xFF),
-                    1,
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL,
-                    )
+
+                total_passed_vehicle = total_passed_vehicle + counter
+                counter = 0
+                for i,b in enumerate(boxes[0]):
+        #                 car                    bus                  truck
+                    if classes[0][i] == 3 or classes[0][i] == 6 or classes[0][i] == 8:
+                      if scores[0][i] >= 0.5:
+                        mid_x = (boxes[0][i][1]+boxes[0][i][3])/2
+                        mid_y = (boxes[0][i][0]+boxes[0][i][2])/2
+                        apx_distance = round(((1 - (boxes[0][i][3] - boxes[0][i][1]))**4),1)
+                        cv2.putText(input_frame, '{}'.format(apx_distance), (int(mid_x*600),int(mid_y*360)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+                        # print(category_index.get(classes[0][i]))
+                        line_y = boxes[0][i][2] * 360
+                        if boxes[0][i][1] * 600 >= 230 and boxes[0][i][1] * 600 <= 430 and line_y >= 210 and line_y <= 230:
+                            counter = 1
+                            # print("Line Crossed: ", boxes[0][i][1] * 600, line_y)
+                        if apx_distance == 0.3:
+                            print("Line Already Crossed: ", boxes[0][i][1] * 600, boxes[0][i][3] * 600, line_y)
+                            if mid_x > 0.3 and mid_x < 0.7:
+                                cv2.putText(input_frame, 'WARNING!!!', (50,50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,0,255), 3)
+
 
                 cv2.imshow('vehicle detection', input_frame)
 
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                   break
 
-                if csv_line != 'not_available':
-                    with open('traffic_measurement.csv', 'a') as f:
-                        writer = csv.writer(f)
-                        (size, color, direction, speed) = \
-                            csv_line.split(',')
-                        writer.writerows([csv_line.split(',')])
             cap.release()
             cv2.destroyAllWindows()
 

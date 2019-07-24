@@ -31,7 +31,7 @@ import random
 import tensorflow as tf
 
 # from handlers.scikit_model_handler import ModelHandler
-from handlers.keras_model_handler import ModelHandler
+# from handlers.keras_model_handler import ModelHandler
 
 FLAGS = None
 
@@ -74,29 +74,31 @@ def set_config():
 
 def get_keras_model():
     print("\n\n <<<<<<<< GET KERAS MODEL HANDLER >>>>>>>>")
+    from handlers.keras_model_handler import ModelHandler
     model_handler = ModelHandler(CONFIG)
     return model_handler
 
 def get_scikit_model():
     print("\n\n <<<<<<<< GET SCIKIT MODEL HANDLER >>>>>>>>")
+    from handlers.scikit_model_handler import ModelHandler
     model_handler = ModelHandler(CONFIG)
     return model_handler
 
-def get_model_handler(library_name="keras"):
-    if library_name == "scikit":
+def get_model_handler():
+    if FLAGS.framework == "scikit":
         return get_scikit_model()
-    elif library_name == "keras":
+    elif FLAGS.framework == "keras":
         return get_keras_model()
     else:
         return None
 
-def create_model(library_name="keras"):
-    model_handler = get_model_handler(library_name)
+def create_model():
+    model_handler = get_model_handler()
     print(model_handler.name)
-    if library_name == "scikit":
+    if FLAGS.framework == "scikit":
         print("\n\n <<<<<<<< CREATE MODEL FROM SCIKIT LIBRARY >>>>>>>>")
         model_handler.create_model()
-    elif library_name == "keras":
+    elif FLAGS.framework == "keras":
         print("\n\n <<<<<<<< CREATE MODEL FROM KERAS LIBRARY >>>>>>>>")
         model_handler.create_model()
     else:
@@ -104,7 +106,7 @@ def create_model(library_name="keras"):
 
 def main(_):
     set_config()
-    create_model("keras")
+    create_model()
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
@@ -113,6 +115,7 @@ if __name__ == '__main__':
   parser.add_argument('--result_dir', type=str, default='$RESULT_DIR', help='Directory with results')
   parser.add_argument('--data_file', type=str, default='data.csv', help='Data file name')
   parser.add_argument('--config_file', type=str, default='model_config.json', help='Model Configuration file name')
+  parser.add_argument('--framework', type=str, default='keras', help='ML Framework to use')
 
   FLAGS, unparsed = parser.parse_known_args()
   print("Start model training")

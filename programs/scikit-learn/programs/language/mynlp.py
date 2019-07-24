@@ -61,7 +61,7 @@ print("Performance of MultinomialNB Classifier: >> ", np.mean(predicted == Y_tes
 # Training Support Vector Machines - SVM and calculating its performance
 from sklearn.linear_model import SGDClassifier
 text_clf_svm = Pipeline([('vect', CountVectorizer()), ('tfidf', TfidfTransformer()),
-                         ('clf-svm', SGDClassifier(loss='hinge', penalty='l2',alpha=1e-3, max_iter=5, random_state=42))])
+                         ('clf-svm', SGDClassifier(loss='hinge', penalty='l2',alpha=1e-3,max_iter=10, random_state=42))])
 
 text_clf_svm = text_clf_svm.fit(X_train, Y_train)
 predicted_svm = text_clf_svm.predict(X_test)

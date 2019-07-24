@@ -75,7 +75,8 @@ def main(_):
     # pp.generate_pbtext_file(unique_classes, os.path.join(DATA_DIR, 'detection_labels_map.pbtxt'))
     # pp.convert_to_tfrecords(unique_classes, 'train', DATA_DIR)
     # pp.convert_to_tfrecords(unique_classes, 'test', DATA_DIR)
-    pp.download_model('http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz', DATA_DIR)
+    # pp.download_model('http://download.tensorflow.org/models/object_detection/ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz', DATA_DIR)
+    pp.prepare_dataset('data/annotations/Indian_Number_plates.json')
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
