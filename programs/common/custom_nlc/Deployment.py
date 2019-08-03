@@ -23,7 +23,7 @@ from watson_machine_learning_client import WatsonMachineLearningAPIClient
 buckets = ['training-data-628e2c7c-5cd4-4b65-97d3-2d22b9972a73', 'training-results-628e2c7c-5cd4-4b65-97d3-2d22b9972a73']
 scoring_params = None
 
-with open('config.json', 'r') as f:
+with open('./secrets/config.json', 'r') as f:
     global SECRET_CONFIG
     SECRET_CONFIG = json.load(f)
 

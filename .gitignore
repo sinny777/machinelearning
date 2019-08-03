@@ -1,5 +1,6 @@
 data
 results
+secrets
 __pycache__/
 cache/
 pretrain/
