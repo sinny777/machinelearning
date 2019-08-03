@@ -1,6 +1,7 @@
 data
 results
 secrets
+# details.json
 __pycache__/
 cache/
 pretrain/

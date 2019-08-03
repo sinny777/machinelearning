@@ -3,7 +3,7 @@ import urllib3, requests, json
 # retrieve your wml_service_credentials_username, wml_service_credentials_password, and wml_service_credentials_url from the
 # Service credentials associated with your IBM Cloud Watson Machine Learning Service instance
 
-with open('config.json', 'r') as f:
+with open('./secrets/config.json', 'r') as f:
     global SECRET_CONFIG
     SECRET_CONFIG = json.load(f)
 
