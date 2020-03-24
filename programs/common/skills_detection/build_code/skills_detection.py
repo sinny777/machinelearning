@@ -351,7 +351,7 @@ def classify():
         
 def main():
     set_config()
-    create_csv_from_skills()
+    # create_csv_from_skills()
     dataset = load_data()
     full_dataset, train_dataset, val_dataset = prepare_dataset(dataset)
     model = create_model()

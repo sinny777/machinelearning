@@ -268,7 +268,7 @@ class ModelHandler(object):
         if os.path.exists(dirpath) and os.path.isdir(dirpath):
             shutil.rmtree(dirpath)
 
-    def get_checkpoints(self):
+    def get_callbacks(self):
         # Include the epoch in the file name (uses `str.format`)
         checkpoint_path = self.CONFIG['CHECKPOINTS_PATH']
         checkpoint_dir = os.path.dirname(checkpoint_path+'/cp-{epoch:04d}.ckpt')
@@ -298,7 +298,7 @@ class ModelHandler(object):
             epochs=self.CONFIG['MODEL_CONFIG']['epochs'],
             validation_data = val_data_gen,
             validation_steps = dataset.total_val // self.CONFIG['MODEL_CONFIG']['batch_size'],
-            callbacks = self.get_checkpoints()
+            callbacks = self.get_callbacks()
         )
         model.save(self.CONFIG["MODEL_PATH"])
         print("<<<<<<<< ML MODEL CREATED AND SAVED LOCALLY AT: ", self.CONFIG["MODEL_PATH"])
