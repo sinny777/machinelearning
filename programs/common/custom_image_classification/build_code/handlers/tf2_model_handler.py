@@ -114,7 +114,7 @@ class ModelHandler(object):
                 MaxPooling2D(),
                 Flatten(),
                 Dense(512, activation='relu'),
-                Dense(2, activation=self.CONFIG['MODEL_CONFIG']['activation'])
+                Dense(total_labels, activation=self.CONFIG['MODEL_CONFIG']['activation'])
             ])
 
         base_learning_rate = 0.0001
@@ -368,15 +368,19 @@ class ModelHandler(object):
         x = img_to_array(img) # this is a Numpy array with shape (3, 256, 256)
         x = x.reshape((1,) + x.shape)/255 # this is a Numpy array with shape (1, 3, 256, 256)
         pred = model.predict(x)
-        pred_label = np.argmax(pred, axis=1)
-        
-        d = {0: 'Banana', 1: 'Blueberry', 2: 'Kiwi', 3: 'Lemon'}
-        for key in d.keys():
-            if pred_label[0] == key:
-                print("Assessment: {} Image ".format(d[key]))
-        print("Prediction complete.")
 
-    
+        print('\n\n')
+        # print('predictions: ', pred)
+        score = tf.nn.softmax(pred[0])
+        # print('score: ', score)
+        # print('Class: ', np.argmax(score))
+        d = {0: 'Accident', 1: 'Fire', 2: 'Negative'}
+        print(
+                "Prediction: {} with a {:.2f} percent confidence.\n\n"
+                .format(d[np.argmax(score)], 100 * np.max(score))
+            )
+
+        
     # This function will plot images in the form of a grid with 1 row and 5 columns where images are placed in each column.
     def plotImages(self, images_arr):
         fig, axes = plt.subplots(1, 5, figsize=(20,20))

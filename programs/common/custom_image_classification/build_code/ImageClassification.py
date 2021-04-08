@@ -6,6 +6,7 @@
 # Natural Language Classification.
 #
 # python build_code/ImageClassification.py --data_dir data/car-damage-dataset/data3a --result_dir results --config_file model_config.json
+# python build_code/ImageClassification.py --data_dir data/cctv_detection --result_dir results --config_file model_config.json
 #
 # *************************************** #
 
@@ -97,9 +98,11 @@ def create_model(model_handler):
 def main():
     set_config()
     model_handler = get_model_handler()
+
+    classify = True
     
-    if True:
-        image_path = os.path.join(CONFIG['DATA_DIR'], 'test/bananas2.jpg')
+    if classify:
+        image_path = os.path.join(CONFIG['DATA_DIR'], 'validation/accident/test10_22.jpg')
         # image_path = 'https://cdn1.sph.harvard.edu/wp-content/uploads/sites/30/2018/08/bananas-1354785_1920-1200x800.jpg'
         model_handler.predict_image(image_path)
     else:
