@@ -1,10 +1,10 @@
-# Natural Language Classifier
+# IBM Watson Assistant Skills Detection
 
-This repository can be used as a reference to creating ML or Deep learning models using Tensorflow, Keras or any library of your choice.  This one has code for creating Natural Language classifier model that runs on IBM Watson Machine learning platform and can be configured to use runtime (CPU or GPU) as per your choice.  All the code to create and train the model is under the "build_code" folder.  Please note that whole of this code under "build_code" folder is zipped and deployed to IBM Watson Machine Learning platform and runs there.  
+This repository can be used as a reference to creating ML or Deep learning models using Tensorflow 2.0 for detecting IBM Watson Assistant Skill from a user input (text) 
 
 ## Project Structure
 
-  - build_code/IntentClassification.py: This is the main file that runs the code to create and train a model.
+  - build_code/skills_detection.py: This is the main file that runs the code to create and train a model.
 
   - build_code/handlers: This has all the handlers like keras_model_handler.py, data_handler.py and cloud object storage handler (cos_handler.py)
 
